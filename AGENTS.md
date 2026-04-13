@@ -69,6 +69,26 @@ To fix:
 3. **Sync Types**: After any schema change, instruct the user to run `npm run update-types` to refresh `src/types/supabase.ts` via the Supabase CLI. Rely ONLY on these generated definitions.
 4. **RLS Constraint**: Always assume Row Level Security (RLS) is active. By default, write queries that respect RLS constraints.
 
-## Project Overview
-A high-performance Next.js starter optimized for AI-native development (Vibe Coding), featuring automated type-safety and live database orchestration.
+## Project Overview: AdventFlow
+AdventFlow is an AI-native, multi-tenant ERP and "Mission Hub" for the Seventh-day Adventist Church. It is built on the DannFlow architecture to enable rapid, hallucination-free development.
+
+### 🏛️ Organizational Hierarchy (The Mission Tree)
+The system operates on a 4-tier recursive parent-child model defined in `src/lib/mission-config.ts`:
+1. **Mission**: Global/Union level (System Admins).
+2. **Area**: Regional groups of Divisions.
+3. **Division**: Local groups of Churches (Managed by Pastors).
+4. **Church**: Local congregations with Members, Elders, and Treasurers.
+
+### 🔑 Core Features & Logic
+- **Scoped Onboarding**: Users "Request-to-Join" a specific Church. Approvals are tiered: Elders approve Members; Pastors approve Elders; Mission Admins approve Pastors.
+- **The Zero-Hallucination Loop**: Uses `npm run checkpoint` (SQL snapshots) and `npm run update-types` to ensure AI agents have a 1:1 map of the RLS-hardened schema.
+- **Digital Bulletin (Blog)**: Tiptap-powered rich text editor for Media Teams. Supports YouTube/FB embeds and compressed image uploads.
+- **Resource Library**: A "Storage Hack" system. Instead of hosting large files, it stores Google Drive share links tagged by the **28 Fundamental Beliefs**.
+- **Unified Schedules**: A 3-tier calendar (Mission-wide, Area-wide, and Local) with role-based editing permissions.
+- **Financial Remittance**: A mobile-first reporting tool for Church Treasurers to submit weekly Tithe/Offering data to the Mission.
+
+### 🛡️ Security & Privacy (RA 10173)
+- **RLS-First**: All service-layer queries must respect the `structure_id` of the user.
+- **Data Privacy**: Mandatory consent for ecclesiastical record-keeping in compliance with the Philippine Data Privacy Act.
+- **External Storage**: Legal responsibility for file content is offloaded to the user's Google Drive via link-sharing.
 <!-- END:nextjs-agent-rules -->
