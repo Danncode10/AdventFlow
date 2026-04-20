@@ -68,25 +68,37 @@ export async function getUserProfile() {
       console.warn("Profile fetch error:", profileError.message);
     }
 
-    // Determine current entity and fetch its name
-    let entityName = "Unassigned";
+    // Resolve full ecclesiastical hierarchy names
     if (profile) {
+      const hierarchy = {
+        mission: 'Unassigned',
+        area: 'Unassigned',
+        division: 'Unassigned',
+        church: 'Unassigned'
+      };
+
+      if (profile.mission_id) {
+        const { data } = await supabase.from('missions').select('name').eq('id', profile.mission_id).single();
+        if (data) hierarchy.mission = data.name;
+      }
+      if (profile.area_id) {
+        const { data } = await supabase.from('areas').select('name').eq('id', profile.area_id).single();
+        if (data) hierarchy.area = data.name;
+      }
+      if (profile.division_id) {
+        const { data } = await supabase.from('divisions').select('name').eq('id', profile.division_id).single();
+        if (data) hierarchy.division = data.name;
+      }
       if (profile.church_id) {
         const { data } = await supabase.from('churches').select('name').eq('id', profile.church_id).single();
-        if (data) entityName = data.name;
-      } else if (profile.division_id) {
-        const { data } = await supabase.from('divisions').select('name').eq('id', profile.division_id).single();
-        if (data) entityName = data.name;
-      } else if (profile.area_id) {
-        const { data } = await supabase.from('areas').select('name').eq('id', profile.area_id).single();
-        if (data) entityName = data.name;
-      } else if (profile.mission_id) {
-        const { data } = await supabase.from('missions').select('name').eq('id', profile.mission_id).single();
-        if (data) entityName = data.name;
+        if (data) hierarchy.church = data.name;
       }
       
-      // Inject helper property for the UI
-      (profile as any).entity_name = entityName;
+      (profile as any).hierarchy = hierarchy;
+      (profile as any).entity_name = hierarchy.church !== 'Unassigned' ? hierarchy.church : 
+                                   hierarchy.division !== 'Unassigned' ? hierarchy.division :
+                                   hierarchy.area !== 'Unassigned' ? hierarchy.area :
+                                   hierarchy.mission;
     }
 
     return { user, profile, roles: [] }; // roles array is now handled within profile object

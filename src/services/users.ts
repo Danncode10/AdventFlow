@@ -71,3 +71,45 @@ export async function updateProfile(updates: {
   return data;
 }
 
+
+export async function getAvailableRoles() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('available_roles')
+    .select('*')
+    .order('name');
+  if (error) throw error;
+  return data;
+}
+
+export async function requestRole(roleName: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  // Fetch current pending roles to avoid overwriting
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('pending_roles, approved_roles')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile) throw new Error('Profile not found');
+
+  // Check if already approved or pending
+  if (profile.approved_roles?.includes(roleName) || profile.pending_roles?.includes(roleName)) {
+    throw new Error('Role already processed or pending');
+  }
+
+  const updatedPending = [...(profile.pending_roles || []), roleName];
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ 
+      pending_roles: updatedPending 
+    })
+    .eq('id', user.id);
+
+  if (error) throw error;
+  return { success: true };
+}
