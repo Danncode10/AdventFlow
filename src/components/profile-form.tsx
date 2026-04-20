@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { User, Calendar, CircleUser, Loader2, CheckCircle2, ShieldCheck, ShieldAlert, ShieldX, History, MapPin, Church, Compass, Layout, PlusCircle, Check, Info, Music, Video, PenTool, Calculator, Scale, Users, Banknote, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -61,15 +62,15 @@ function RoleTooltip({ text }: { text: string }) {
   );
 }
 
-function RoleChip({ 
-  role, 
-  profile, 
+function RoleChip({
+  role,
+  profile,
   stagedRoles,
   toggleStagedRole,
   isSaving
-}: { 
-  role: any, 
-  profile: any, 
+}: {
+  role: any,
+  profile: any,
   stagedRoles: string[],
   toggleStagedRole: (name: string) => void,
   isSaving: boolean
@@ -79,7 +80,7 @@ function RoleChip({
   const isPending = profile?.pending_roles?.includes(role.name);
   const isStaged = stagedRoles.includes(role.name);
   const isDisabled = isApproved || isPending;
-  
+
   const Icon = roleIcons[role.name] || Info;
 
   return (
@@ -92,8 +93,8 @@ function RoleChip({
         onClick={() => toggleStagedRole(role.name)}
         className={`
           group flex items-center gap-2.5 px-5 py-2.5 rounded-full border transition-all duration-300
-          ${isDisabled 
-            ? 'bg-primary/10 border-primary/20 text-primary opacity-60 cursor-not-allowed' 
+          ${isDisabled
+            ? 'bg-primary/10 border-primary/20 text-primary opacity-60 cursor-not-allowed'
             : isStaged
               ? 'bg-primary/5 border-primary border-dashed text-primary shadow-sm ring-1 ring-primary/20'
               : 'bg-background border-border text-foreground hover:border-primary/60 hover:shadow-md active:scale-95'
@@ -124,6 +125,7 @@ export function ProfileForm({ profile }: { profile: any }) {
   const [stagedRoles, setStagedRoles] = useState<string[]>([]);
   const [isSavingRoles, setIsSavingRoles] = useState(false);
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   useEffect(() => {
     getAvailableRoles().then(setAvailableRoles).catch(console.error);
@@ -184,6 +186,7 @@ export function ProfileForm({ profile }: { profile: any }) {
       toast.success("Requests Manifested", { description: `${stagedRoles.length} roles are now pending verification.` });
       setStagedRoles([]);
       queryClient.invalidateQueries({ queryKey: ["profiles-db"] });
+      router.refresh();
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -197,6 +200,7 @@ export function ProfileForm({ profile }: { profile: any }) {
         await cancelPendingRole(roleName);
         toast.success("Request Cancelled");
         queryClient.invalidateQueries({ queryKey: ["profiles-db"] });
+        router.refresh();
       } catch (err: any) {
         toast.error(err.message);
       }
@@ -204,9 +208,9 @@ export function ProfileForm({ profile }: { profile: any }) {
   };
 
   const toggleStagedRole = (roleName: string) => {
-    setStagedRoles(prev => 
-      prev.includes(roleName) 
-        ? prev.filter(r => r !== roleName) 
+    setStagedRoles(prev =>
+      prev.includes(roleName)
+        ? prev.filter(r => r !== roleName)
         : [...prev, roleName]
     );
   };
@@ -237,7 +241,7 @@ export function ProfileForm({ profile }: { profile: any }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        
+
         {/* ── LEFT COLUMN: Personal & Org Placement ── */}
         <div className="lg:col-span-5 space-y-12">
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -322,7 +326,7 @@ export function ProfileForm({ profile }: { profile: any }) {
 
         {/* ── RIGHT COLUMN: Roles & Recruitment ── */}
         <div className="lg:col-span-7 space-y-12">
-          
+
           {/* Status Section */}
           <div className="space-y-6 bg-secondary/5 p-8 rounded-[3rem] border border-border/20">
             <div className="space-y-1">
@@ -359,7 +363,7 @@ export function ProfileForm({ profile }: { profile: any }) {
                           <div key={idx} className="bg-background border border-border/60 px-5 py-2.5 rounded-2xl flex items-center gap-3 group relative overflow-hidden">
                             <span className="text-xs font-black uppercase tracking-tight italic">{roleName}</span>
                             {id === 'pending' && (
-                              <button 
+                              <button
                                 onClick={() => handleCancelRole(roleName)}
                                 className="p-1 hover:bg-destructive/10 rounded-full transition-colors text-muted-foreground hover:text-destructive"
                               >
@@ -392,17 +396,17 @@ export function ProfileForm({ profile }: { profile: any }) {
 
             <div className="space-y-12">
               {[
-                { 
-                  title: 'Local Church', 
-                  roles: ['Member', 'Elder', 'Deacon', 'Head Deacon', 'Head Deaconess', 'Church Clerk', 'Clerk', 'Church Treasurer', 'Treasurer', 'Scheduler', 'Media Team', 'Music Director', 'Church Youth Leader', 'Youth Leader', 'Church Admin'] 
+                {
+                  title: 'Local Church',
+                  roles: ['Member', 'Elder', 'Deacon', 'Head Deacon', 'Head Deaconess', 'Church Clerk', 'Clerk', 'Church Treasurer', 'Treasurer', 'Scheduler', 'Media Team', 'Music Director', 'Church Youth Leader', 'Youth Leader', 'Church Admin']
                 },
-                { 
-                  title: 'Division Level', 
-                  roles: ['Division Admin', 'Division Treasurer', 'Division Youth Leader'] 
+                {
+                  title: 'Division Level',
+                  roles: ['Division Admin', 'Division Treasurer', 'Division Youth Leader']
                 },
-                { 
-                  title: 'Area & Mission', 
-                  roles: ['Area Coordinator', 'Pastor', 'Mission Admin', 'Mission Treasurer', 'Mission Youth Leader', 'Area Admin', 'Area Treasurer', 'Area Youth Leader'] 
+                {
+                  title: 'Area & Mission',
+                  roles: ['Area Coordinator', 'Pastor', 'Mission Admin', 'Mission Treasurer', 'Mission Youth Leader', 'Area Admin', 'Area Treasurer', 'Area Youth Leader']
                 }
               ].map((tier) => {
                 const filteredRoles = availableRoles.filter(r => tier.roles.includes(r.name));
@@ -415,10 +419,10 @@ export function ProfileForm({ profile }: { profile: any }) {
                     <h5 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.25em] px-1">
                       {tier.title}
                     </h5>
-                    
+
                     <div className="flex flex-wrap gap-3">
                       {filteredRoles.map((role) => (
-                        <RoleChip 
+                        <RoleChip
                           key={role.id}
                           role={role}
                           profile={profile}
@@ -429,21 +433,14 @@ export function ProfileForm({ profile }: { profile: any }) {
                       ))}
                     </div>
 
-                    {hasPendingInTier && (
-                      <div className="flex items-center gap-2 px-1 mt-2">
-                        <History className="w-3 h-3 text-amber-500 animate-pulse" />
-                        <span className="text-[9px] font-black uppercase tracking-widest text-amber-500/80 italic">
-                          ⏳ Pending Verification in Node Cluster
-                        </span>
-                      </div>
-                    )}
+
                   </div>
                 );
               })}
             </div>
 
             {stagedRoles.length > 0 && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="pt-6 border-t border-border flex items-center justify-between"
@@ -456,7 +453,7 @@ export function ProfileForm({ profile }: { profile: any }) {
                     Staged but not yet Manifested
                   </p>
                 </div>
-                <Button 
+                <Button
                   onClick={handleSaveRoles}
                   disabled={isSavingRoles}
                   className="rounded-full px-8 h-12 uppercase tracking-widest font-black italic shadow-lg shadow-primary/20"
