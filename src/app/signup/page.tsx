@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   Mail, Lock, User, Phone, CheckCircle2, 
@@ -11,6 +12,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { MISSION_HIERARCHY } from '@/lib/mission-config';
 import { signUpWithEmail } from '@/services/auth';
+import { 
+  getMissionsList, 
+  getAreasByMission, 
+  getDivisionsByArea, 
+  getChurchesByDivision 
+} from "@/services/onboarding";
+import { SearchableSelector } from "@/components/searchable-selector";
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,13 +46,71 @@ export default function SignupPage() {
     password: '',
     surname: '',
     firstName: '',
-    mission: 'Northern Luzon Mission',
+    mission: '',
     area: '',
     division: '',
     church: '',
     dpaConsent: false,
     roles: ['MEMBER']
   });
+
+  // Data lists
+  const [missions, setMissions] = useState<any[]>([]);
+  const [areas, setAreas] = useState<any[]>([]);
+  const [divisions, setDivisions] = useState<any[]>([]);
+  const [churches, setChurches] = useState<any[]>([]);
+
+  // Loading states
+  const [loadingMissions, setLoadingMissions] = useState(false);
+  const [loadingAreas, setLoadingAreas] = useState(false);
+  const [loadingDivisions, setLoadingDivisions] = useState(false);
+  const [loadingChurches, setLoadingChurches] = useState(false);
+
+  // Load initial missions
+  React.useEffect(() => {
+    setLoadingMissions(true);
+    getMissionsList()
+      .then(setMissions)
+      .catch(console.error)
+      .finally(() => setLoadingMissions(false));
+  }, []);
+
+  // Cascade loads
+  React.useEffect(() => {
+    if (formData.mission) {
+      setLoadingAreas(true);
+      getAreasByMission(formData.mission)
+        .then(setAreas)
+        .catch(console.error)
+        .finally(() => setLoadingAreas(false));
+    } else {
+      setAreas([]);
+    }
+  }, [formData.mission]);
+
+  React.useEffect(() => {
+    if (formData.area) {
+      setLoadingDivisions(true);
+      getDivisionsByArea(formData.area)
+        .then(setDivisions)
+        .catch(console.error)
+        .finally(() => setLoadingDivisions(false));
+    } else {
+      setDivisions([]);
+    }
+  }, [formData.area]);
+
+  React.useEffect(() => {
+    if (formData.division) {
+      setLoadingChurches(true);
+      getChurchesByDivision(formData.division)
+        .then(setChurches)
+        .catch(console.error)
+        .finally(() => setLoadingChurches(false));
+    } else {
+      setChurches([]);
+    }
+  }, [formData.division]);
 
   const availableRoles = MISSION_HIERARCHY.CHURCH.roles
     .concat(MISSION_HIERARCHY.DIVISION.roles)
@@ -66,8 +132,8 @@ export default function SignupPage() {
       toast.error('Identity Required', { description: 'Please provide valid credentials.' });
       return;
     }
-    if (step === 2 && (!formData.surname || !formData.firstName || !formData.area || !formData.division || !formData.church || !formData.dpaConsent)) {
-      toast.error('Placement Incomplete', { description: 'Ecclesiastical mapping and DPA consent are mandatory.' });
+    if (step === 2 && (!formData.surname || !formData.firstName || !formData.mission || !formData.area || !formData.division || !formData.church || !formData.dpaConsent)) {
+      toast.error('Placement Incomplete', { description: 'All location fields and DPA consent are mandatory.' });
       return;
     }
     setStep(s => Math.min(s + 1, 3));
@@ -81,12 +147,13 @@ export default function SignupPage() {
       await signUpWithEmail(formData.email, formData.password, {
         first_name: formData.firstName,
         last_name: formData.surname,
-        mission: formData.mission,
-        area: formData.area,
-        division: formData.division,
-        church: formData.church,
+        mission_id: formData.mission,
+        area_id: formData.area,
+        division_id: formData.division,
+        church_id: formData.church,
         roles: formData.roles,
-        dpa_consent: formData.dpaConsent
+        dpa_consent: formData.dpaConsent,
+        onboarding_completed: true
       });
       toast.success('Enrollment Initiated', { 
         description: 'Verify your identity via email to complete placement.' 
@@ -251,62 +318,60 @@ export default function SignupPage() {
                     </div>
 
                     <div className="space-y-6 pt-2">
-                      <div className="space-y-2.5">
-                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Mission</Label>
-                        <div className="flex items-center gap-3 h-14 px-5 bg-primary/5 border border-primary/20 rounded-2xl text-primary font-black text-xs uppercase tracking-widest shadow-inner">
-                          <Globe className="w-5 h-5 opacity-60" />
-                          {formData.mission}
-                        </div>
-                      </div>
+                       <SearchableSelector
+                        label="Mission / Union"
+                        items={missions}
+                        value={formData.mission}
+                        loading={loadingMissions}
+                        placeholder="Search Mission..."
+                        onSelect={(id) => setFormData({
+                          ...formData, 
+                          mission: id,
+                          area: '',
+                          division: '',
+                          church: ''
+                        })}
+                      />
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div className="space-y-2.5">
-                          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Area</Label>
-                          <div className="relative">
-                            <select 
-                              className="w-full h-14 px-5 bg-muted/20 border border-border/50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all text-sm font-bold uppercase tracking-tight appearance-none cursor-pointer"
-                              value={formData.area}
-                              onChange={e => setFormData({...formData, area: e.target.value})}
-                            >
-                              <option value="">Select Area</option>
-                              <option value="area1">Area 1 (Ilocos)</option>
-                              <option value="area2">Area 2 (Vizcaya)</option>
-                            </select>
-                            <MapPin className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 pointer-events-none" />
-                          </div>
-                        </div>
-                        <div className="space-y-2.5">
-                          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Division</Label>
-                          <div className="relative">
-                            <select 
-                              className="w-full h-14 px-5 bg-muted/20 border border-border/50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all text-sm font-bold uppercase tracking-tight appearance-none cursor-pointer"
-                              value={formData.division}
-                              onChange={e => setFormData({...formData, division: e.target.value})}
-                            >
-                              <option value="">Select Division</option>
-                              <option value="divA">District A</option>
-                              <option value="divB">District B</option>
-                            </select>
-                            <Building2 className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 pointer-events-none" />
-                          </div>
-                        </div>
+                        <SearchableSelector
+                          label="Strategic Area"
+                          items={areas}
+                          value={formData.area}
+                          loading={loadingAreas}
+                          disabled={!formData.mission}
+                          placeholder={formData.mission ? "Search Area..." : "Select Mission"}
+                          onSelect={(id) => setFormData({
+                            ...formData, 
+                            area: id,
+                            division: '',
+                            church: ''
+                          })}
+                        />
+                        <SearchableSelector
+                          label="Division / District"
+                          items={divisions}
+                          value={formData.division}
+                          loading={loadingDivisions}
+                          disabled={!formData.area}
+                          placeholder={formData.area ? "Search Division..." : "Select Area"}
+                          onSelect={(id) => setFormData({
+                            ...formData, 
+                            division: id,
+                            church: ''
+                          })}
+                        />
                       </div>
 
-                      <div className="space-y-2.5">
-                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Church</Label>
-                        <div className="relative">
-                          <select 
-                            className="w-full h-14 px-5 bg-muted/20 border border-border/50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all text-sm font-bold uppercase tracking-tight appearance-none cursor-pointer"
-                            value={formData.church}
-                            onChange={e => setFormData({...formData, church: e.target.value})}
-                          >
-                            <option value="">Select Church</option>
-                            <option value="church1">Central SDA Church</option>
-                            <option value="church2">Bethel Memorial</option>
-                          </select>
-                          <ChurchIcon className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 pointer-events-none" />
-                        </div>
-                      </div>
+                      <SearchableSelector
+                        label="Local Church"
+                        items={churches}
+                        value={formData.church}
+                        loading={loadingChurches}
+                        disabled={!formData.division}
+                        placeholder={formData.division ? "Search Church..." : "Select Division"}
+                        onSelect={(id) => setFormData({...formData, church: id})}
+                      />
                     </div>
 
                     <div className="flex items-start gap-4 p-6 bg-primary/5 border border-primary/10 rounded-[2rem] transition-all hover:bg-primary/[0.08]">

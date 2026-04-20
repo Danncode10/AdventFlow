@@ -24,6 +24,7 @@ import {
   getChurchesByDivision,
   submitOnboardingRequest 
 } from "@/services/onboarding"
+import { SearchableSelector } from "@/components/searchable-selector"
 import { cn } from "@/lib/utils"
 
 const ROLE_OPTIONS = [
@@ -48,33 +49,49 @@ export default function OnboardingPage() {
   const [selectedChurch, setSelectedChurch] = React.useState<string | null>(null)
   const [selectedRole, setSelectedRole] = React.useState<string | null>(null)
 
-  // Data lists
-  const [missions, setMissions] = React.useState<any[]>([])
-  const [areas, setAreas] = React.useState<any[]>([])
-  const [divisions, setDivisions] = React.useState<any[]>([])
-  const [churches, setChurches] = React.useState<any[]>([])
+  // Loading states
+  const [loadingMissions, setLoadingMissions] = React.useState(false)
+  const [loadingAreas, setLoadingAreas] = React.useState(false)
+  const [loadingDivisions, setLoadingDivisions] = React.useState(false)
+  const [loadingChurches, setLoadingChurches] = React.useState(false)
 
   // Load initial data
   React.useEffect(() => {
-    getMissionsList().then(setMissions).catch(console.error)
+    setLoadingMissions(true)
+    getMissionsList()
+      .then(setMissions)
+      .catch(console.error)
+      .finally(() => setLoadingMissions(false))
   }, [])
 
   // Cascade loads
   React.useEffect(() => {
     if (selectedMission) {
-      getAreasByMission(selectedMission).then(setAreas).catch(console.error)
+      setLoadingAreas(true)
+      getAreasByMission(selectedMission)
+        .then(setAreas)
+        .catch(console.error)
+        .finally(() => setLoadingAreas(false))
     }
   }, [selectedMission])
 
   React.useEffect(() => {
     if (selectedArea) {
-      getDivisionsByArea(selectedArea).then(setDivisions).catch(console.error)
+      setLoadingDivisions(true)
+      getDivisionsByArea(selectedArea)
+        .then(setDivisions)
+        .catch(console.error)
+        .finally(() => setLoadingDivisions(false))
     }
   }, [selectedArea])
 
   React.useEffect(() => {
     if (selectedDivision) {
-      getChurchesByDivision(selectedDivision).then(setChurches).catch(console.error)
+      setLoadingChurches(true)
+      getChurchesByDivision(selectedDivision)
+        .then(setChurches)
+        .catch(console.error)
+        .finally(() => setLoadingChurches(false))
     }
   }, [selectedDivision])
 
@@ -153,84 +170,72 @@ export default function OnboardingPage() {
         {/* 2. Drill-down Search */}
         {step === 2 && (
           <Card className="bg-card border border-border/60 shadow-2xl rounded-[3rem] overflow-hidden p-8 animate-in slide-in-from-right-4">
-            <CardHeader className="p-0 mb-8 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-3xl font-black uppercase italic tracking-tighter">Locate your Sanctuary</CardTitle>
-                <CardDescription className="italic font-semibold">Select the specific entity you are affiliated with</CardDescription>
+            <CardHeader className="p-0 mb-8 flex flex-row items-center justify-between gap-4">
+              <div className="space-y-1">
+                <CardTitle className="text-3xl font-black uppercase italic tracking-tighter">Your Information</CardTitle>
+                <CardDescription className="italic font-bold text-muted-foreground">Tell us a bit about yourself and your sanctuary.</CardDescription>
               </div>
-              <Button variant="ghost" onClick={() => setStep(1)} className="rounded-full font-black uppercase italic text-xs tracking-widest gap-2">
-                <ChevronLeft className="w-4 h-4" /> Change Level
+              <Button variant="ghost" onClick={() => setStep(1)} className="rounded-full font-black uppercase italic text-[10px] tracking-widest gap-2 opacity-50 hover:opacity-100">
+                <ChevronLeft className="w-4 h-4" /> Go Back
               </Button>
             </CardHeader>
             <CardContent className="p-0 space-y-6">
-              <div className="grid grid-cols-1 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground px-4">1. Mission</label>
-                  <select 
-                    className="w-full bg-muted/30 border border-border/50 rounded-2xl p-4 font-bold uppercase tracking-tight outline-none focus:ring-2 ring-primary/20"
-                    onChange={(e) => {
-                      setSelectedMission(e.target.value); 
-                      setSelectedArea(null);
+              <div className="grid grid-cols-1 gap-6">
+                <SearchableSelector
+                  label="1. Mission / Union"
+                  items={missions}
+                  value={selectedMission}
+                  loading={loadingMissions}
+                  placeholder="Search Mission..."
+                  onSelect={(id) => {
+                    setSelectedMission(id);
+                    setSelectedArea(null);
+                    setSelectedDivision(null);
+                    setSelectedChurch(null);
+                  }}
+                />
+
+                {(level === 'AREA' || level === 'DIVISION' || level === 'CHURCH') && (
+                  <SearchableSelector
+                    label="2. Strategic Area / Province"
+                    items={areas}
+                    value={selectedArea}
+                    loading={loadingAreas}
+                    disabled={!selectedMission}
+                    placeholder={selectedMission ? "Search Area..." : "Select Mission first"}
+                    onSelect={(id) => {
+                      setSelectedArea(id);
                       setSelectedDivision(null);
                       setSelectedChurch(null);
                     }}
-                    value={selectedMission || ""}
-                  >
-                    <option value="" disabled>Select Mission</option>
-                    {missions.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                  </select>
-                </div>
-
-                {(level === 'AREA' || level === 'DIVISION' || level === 'CHURCH') && (
-                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground px-4">2. Area</label>
-                    <select 
-                      disabled={!selectedMission}
-                      className="w-full bg-muted/30 border border-border/50 rounded-2xl p-4 font-bold uppercase tracking-tight outline-none focus:ring-2 ring-primary/20 disabled:opacity-50"
-                      onChange={(e) => {
-                        setSelectedArea(e.target.value);
-                        setSelectedDivision(null);
-                        setSelectedChurch(null);
-                      }}
-                      value={selectedArea || ""}
-                    >
-                      <option value="" disabled>Select Area / Province</option>
-                      {areas.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
-                    </select>
-                  </div>
+                  />
                 )}
 
                 {(level === 'DIVISION' || level === 'CHURCH') && (
-                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground px-4">3. Division / District</label>
-                    <select 
-                      disabled={!selectedArea}
-                      className="w-full bg-muted/30 border border-border/50 rounded-2xl p-4 font-bold uppercase tracking-tight outline-none focus:ring-2 ring-primary/20 disabled:opacity-50"
-                      onChange={(e) => {
-                        setSelectedDivision(e.target.value);
-                        setSelectedChurch(null);
-                      }}
-                      value={selectedDivision || ""}
-                    >
-                      <option value="" disabled>Select Division</option>
-                      {divisions.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                    </select>
-                  </div>
+                  <SearchableSelector
+                    label="3. Division / District"
+                    items={divisions}
+                    value={selectedDivision}
+                    loading={loadingDivisions}
+                    disabled={!selectedArea}
+                    placeholder={selectedArea ? "Search Division..." : "Select Area first"}
+                    onSelect={(id) => {
+                      setSelectedDivision(id);
+                      setSelectedChurch(null);
+                    }}
+                  />
                 )}
 
                 {level === 'CHURCH' && (
-                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground px-4">4. Local Church</label>
-                    <select 
-                      disabled={!selectedDivision}
-                      className="w-full bg-muted/30 border border-border/50 rounded-2xl p-4 font-bold uppercase tracking-tight outline-none focus:ring-2 ring-primary/20 disabled:opacity-50"
-                      onChange={(e) => setSelectedChurch(e.target.value)}
-                      value={selectedChurch || ""}
-                    >
-                      <option value="" disabled>Select Church</option>
-                      {churches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                    </select>
-                  </div>
+                  <SearchableSelector
+                    label="4. Local Church"
+                    items={churches}
+                    value={selectedChurch}
+                    loading={loadingChurches}
+                    disabled={!selectedDivision}
+                    placeholder={selectedDivision ? "Search Church..." : "Select Division first"}
+                    onSelect={(id) => setSelectedChurch(id)}
+                  />
                 )}
               </div>
             </CardContent>
