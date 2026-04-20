@@ -14,13 +14,43 @@ export type Database = {
   }
   public: {
     Tables: {
+      missions: {
+        Row: {
+          address: string | null
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          settings: Json | null
+          slug: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          settings?: Json | null
+          slug: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          settings?: Json | null
+          slug?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           first_name: string | null
-          last_name: string | null
           id: string
           is_active: boolean | null
+          last_name: string | null
           onboarding_completed: boolean | null
           structure_id: string | null
           updated_at: string | null
@@ -28,9 +58,9 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           first_name?: string | null
-          last_name?: string | null
           id: string
           is_active?: boolean | null
+          last_name?: string | null
           onboarding_completed?: boolean | null
           structure_id?: string | null
           updated_at?: string | null
@@ -38,9 +68,9 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           first_name?: string | null
-          last_name?: string | null
           id?: string
           is_active?: boolean | null
+          last_name?: string | null
           onboarding_completed?: boolean | null
           structure_id?: string | null
           updated_at?: string | null
@@ -61,6 +91,7 @@ export type Database = {
           id: string
           level: Database["public"]["Enums"]["structure_level"]
           metadata: Json | null
+          mission_id: string | null
           name: string
           parent_id: string | null
         }
@@ -69,6 +100,7 @@ export type Database = {
           id?: string
           level: Database["public"]["Enums"]["structure_level"]
           metadata?: Json | null
+          mission_id?: string | null
           name: string
           parent_id?: string | null
         }
@@ -77,10 +109,18 @@ export type Database = {
           id?: string
           level?: Database["public"]["Enums"]["structure_level"]
           metadata?: Json | null
+          mission_id?: string | null
           name?: string
           parent_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "structures_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "structures_parent_id_fkey"
             columns: ["parent_id"]
@@ -92,24 +132,59 @@ export type Database = {
       }
       user_roles: {
         Row: {
+          approved_at: string | null
+          approved_by: string | null
           created_at: string
           id: string
+          is_approved: boolean | null
+          rejected_at: string | null
+          rejected_by: string | null
+          rejection_reason: string | null
           role: string
+          status: Database["public"]["Enums"]["role_status"]
           user_id: string
         }
         Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           id?: string
+          is_approved?: boolean | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
           role: string
+          status?: Database["public"]["Enums"]["role_status"]
           user_id: string
         }
         Update: {
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           id?: string
+          is_approved?: boolean | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
           role?: string
+          status?: Database["public"]["Enums"]["role_status"]
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "user_roles_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_roles_rejected_by_fkey"
+            columns: ["rejected_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "user_roles_user_id_fkey"
             columns: ["user_id"]
@@ -127,6 +202,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      role_status: "pending" | "approved" | "rejected"
       structure_level: "MISSION" | "AREA" | "DIVISION" | "CHURCH"
     }
     CompositeTypes: {
@@ -255,6 +331,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      role_status: ["pending", "approved", "rejected"],
       structure_level: ["MISSION", "AREA", "DIVISION", "CHURCH"],
     },
   },
