@@ -1,34 +1,49 @@
 @import "tailwindcss";
 
 @theme {
-  /* Deep Mission Blue - The identity of AdventFlow */
+  /* AdventFlow "Sanctuary" Palette */
   --color-primary: #1e3a8a; 
   --color-primary-foreground: #f8fafc;
 
-  --color-background: #ffffff;
+  /* Use a subtle tint for the background to avoid "flat" white */
+  --color-background: #fdfdfe; 
   --color-foreground: #020617;
 
-  /* Glassmorphism-ready card colors */
+  /* Premium Card & Popover semantics */
   --color-card: #ffffff;
   --color-card-foreground: #020617;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #020617;
 
-  /* Sophisticated grays for the "Engineering Edge" */
+  /* Refined secondary and muted tones */
   --color-secondary: #f1f5f9;
-  --color-secondary-foreground: #1e293b;
+  --color-secondary-foreground: #0f172a;
+  
   --color-muted: #f8fafc;
   --color-muted-foreground: #64748b;
+  
   --color-accent: #eff6ff;
   --color-accent-foreground: #1e3a8a;
   
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #f8fafc;
+
   --color-border: #e2e8f0;
   --color-input: #e2e8f0;
   --color-ring: #1e40af;
 
-  /* The signature DannFlow hyper-radius */
+  /* Custom Semantic Radii */
   --radius-5xl: 3rem;
+  --radius-4xl: 2rem;
   --radius-3xl: 1.5rem;
-  --radius-xl: 1rem;
+  --radius-2xl: 1rem;
+  --radius-xl: 0.75rem;
+
+  /* Custom Gradients as Tokens */
+  --background-image-gradient-mesh: radial-gradient(at 0% 0%, #eff6ff 0%, transparent 50%), 
+                                   radial-gradient(at 100% 0%, #f0f9ff 0%, transparent 50%);
 }
+
 
 
 @layer base {
