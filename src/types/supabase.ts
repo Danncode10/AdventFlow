@@ -14,6 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
+      areas: {
+        Row: {
+          created_at: string | null
+          headquarters: string | null
+          id: string
+          mission_id: string
+          name: string
+          province: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          headquarters?: string | null
+          id?: string
+          mission_id: string
+          name: string
+          province?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          headquarters?: string | null
+          id?: string
+          mission_id?: string
+          name?: string
+          province?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "areas_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      churches: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          division_id: string
+          established_date: string | null
+          id: string
+          location_coordinates: unknown
+          name: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          division_id: string
+          established_date?: string | null
+          id?: string
+          location_coordinates?: unknown
+          name: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          division_id?: string
+          established_date?: string | null
+          id?: string
+          location_coordinates?: unknown
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "churches_division_id_fkey"
+            columns: ["division_id"]
+            isOneToOne: false
+            referencedRelation: "divisions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      divisions: {
+        Row: {
+          area_id: string
+          created_at: string | null
+          district_code: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          area_id: string
+          created_at?: string | null
+          district_code?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          area_id?: string
+          created_at?: string | null
+          district_code?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "divisions_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       missions: {
         Row: {
           address: string | null
@@ -22,7 +127,7 @@ export type Database = {
           logo_url: string | null
           name: string
           settings: Json | null
-          slug: string
+          slug: string | null
         }
         Insert: {
           address?: string | null
@@ -31,7 +136,7 @@ export type Database = {
           logo_url?: string | null
           name: string
           settings?: Json | null
-          slug: string
+          slug?: string | null
         }
         Update: {
           address?: string | null
@@ -40,92 +145,80 @@ export type Database = {
           logo_url?: string | null
           name?: string
           settings?: Json | null
-          slug?: string
+          slug?: string | null
         }
         Relationships: []
       }
       profiles: {
         Row: {
+          area_id: string | null
           avatar_url: string | null
+          church_id: string | null
+          division_id: string | null
           first_name: string | null
           id: string
           is_active: boolean | null
           last_name: string | null
+          mission_id: string | null
           onboarding_completed: boolean | null
-          structure_id: string | null
+          roles: string[] | null
           updated_at: string | null
         }
         Insert: {
+          area_id?: string | null
           avatar_url?: string | null
+          church_id?: string | null
+          division_id?: string | null
           first_name?: string | null
           id: string
           is_active?: boolean | null
           last_name?: string | null
+          mission_id?: string | null
           onboarding_completed?: boolean | null
-          structure_id?: string | null
+          roles?: string[] | null
           updated_at?: string | null
         }
         Update: {
+          area_id?: string | null
           avatar_url?: string | null
+          church_id?: string | null
+          division_id?: string | null
           first_name?: string | null
           id?: string
           is_active?: boolean | null
           last_name?: string | null
+          mission_id?: string | null
           onboarding_completed?: boolean | null
-          structure_id?: string | null
+          roles?: string[] | null
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_structure_id_fkey"
-            columns: ["structure_id"]
+            foreignKeyName: "profiles_area_id_fkey"
+            columns: ["area_id"]
             isOneToOne: false
-            referencedRelation: "structures"
+            referencedRelation: "areas"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      structures: {
-        Row: {
-          created_at: string
-          id: string
-          level: Database["public"]["Enums"]["structure_level"]
-          metadata: Json | null
-          mission_id: string | null
-          name: string
-          parent_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          level: Database["public"]["Enums"]["structure_level"]
-          metadata?: Json | null
-          mission_id?: string | null
-          name: string
-          parent_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          level?: Database["public"]["Enums"]["structure_level"]
-          metadata?: Json | null
-          mission_id?: string | null
-          name?: string
-          parent_id?: string | null
-        }
-        Relationships: [
           {
-            foreignKeyName: "structures_mission_id_fkey"
+            foreignKeyName: "profiles_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_division_id_fkey"
+            columns: ["division_id"]
+            isOneToOne: false
+            referencedRelation: "divisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_mission_id_fkey"
             columns: ["mission_id"]
             isOneToOne: false
             referencedRelation: "missions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "structures_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "structures"
             referencedColumns: ["id"]
           },
         ]
