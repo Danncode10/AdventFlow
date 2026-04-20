@@ -73,11 +73,11 @@ export default function LoginPage() {
                 AdventFlow
               </h1>
               <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.3em] opacity-60">
-                Secure Personnel Gateway
+                Welcome Back
               </p>
             </div>
             <p className="text-muted-foreground text-sm font-medium max-w-[300px] mx-auto leading-relaxed pt-2">
-              Enter Sanctuary to access the regional Mission Hub and ecclesiastical records.
+              Sign in to access your dashboard and manage your account.
             </p>
           </CardHeader>
           
@@ -86,7 +86,7 @@ export default function LoginPage() {
               <div className="space-y-6">
                 <div className="space-y-2.5">
                   <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">
-                    Authorized Email
+                    Email Address
                   </Label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -95,7 +95,7 @@ export default function LoginPage() {
                     <Input 
                       id="email"
                       type="email" 
-                      placeholder="personnel@church.org" 
+                      placeholder="name@example.com" 
                       className="h-14 pl-12 bg-muted/20 border-border/50 rounded-2xl focus:ring-primary/10 transition-all text-base placeholder:text-muted-foreground/30 font-medium"
                       value={email}
                       onChange={e => setEmail(e.target.value)}
@@ -107,12 +107,12 @@ export default function LoginPage() {
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between ml-1">
                     <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-                      Access Key
+                      Password
                     </Label>
                     <a href="/forgot-password" 
                       className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors opacity-60"
                     >
-                      Recovery
+                      Forgot Password?
                     </a>
                   </div>
                   <div className="relative group">
@@ -147,7 +147,7 @@ export default function LoginPage() {
                   className="h-14 bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-primary/95 active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-xl shadow-primary/20 group"
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5 group-hover:animate-pulse" />}
-                  {loading ? 'Authenticating...' : 'Authorize Entrance'}
+                  {loading ? 'Logging in...' : 'Login'}
                 </Button>
                 
                 <Button 
@@ -157,7 +157,7 @@ export default function LoginPage() {
                   disabled={loading} 
                   className="h-14 border-border/60 bg-transparent font-black text-xs uppercase tracking-widest text-foreground rounded-2xl hover:bg-muted/50 transition-all"
                 >
-                  New Enrollment Request
+                  Create an Account
                 </Button>
               </div>
             </form>

@@ -239,7 +239,3 @@ export function DashboardShell({ profiles, user, profile }: DashboardShellProps)
   )
 }
 
-
-
-  )
-}

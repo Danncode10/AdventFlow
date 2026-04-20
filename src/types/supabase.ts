@@ -17,7 +17,8 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
-          full_name: string | null
+          first_name: string | null
+          last_name: string | null
           id: string
           is_active: boolean | null
           onboarding_completed: boolean | null
@@ -26,7 +27,8 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
-          full_name?: string | null
+          first_name?: string | null
+          last_name?: string | null
           id: string
           is_active?: boolean | null
           onboarding_completed?: boolean | null
@@ -35,7 +37,8 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
-          full_name?: string | null
+          first_name?: string | null
+          last_name?: string | null
           id?: string
           is_active?: boolean | null
           onboarding_completed?: boolean | null
