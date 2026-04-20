@@ -151,6 +151,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          approved_roles: string[] | null
           area_id: string | null
           avatar_url: string | null
           church_id: string | null
@@ -161,10 +162,12 @@ export type Database = {
           last_name: string | null
           mission_id: string | null
           onboarding_completed: boolean | null
-          roles: string[] | null
+          pending_roles: string[] | null
+          rejected_roles: string[] | null
           updated_at: string | null
         }
         Insert: {
+          approved_roles?: string[] | null
           area_id?: string | null
           avatar_url?: string | null
           church_id?: string | null
@@ -175,10 +178,12 @@ export type Database = {
           last_name?: string | null
           mission_id?: string | null
           onboarding_completed?: boolean | null
-          roles?: string[] | null
+          pending_roles?: string[] | null
+          rejected_roles?: string[] | null
           updated_at?: string | null
         }
         Update: {
+          approved_roles?: string[] | null
           area_id?: string | null
           avatar_url?: string | null
           church_id?: string | null
@@ -189,7 +194,8 @@ export type Database = {
           last_name?: string | null
           mission_id?: string | null
           onboarding_completed?: boolean | null
-          roles?: string[] | null
+          pending_roles?: string[] | null
+          rejected_roles?: string[] | null
           updated_at?: string | null
         }
         Relationships: [

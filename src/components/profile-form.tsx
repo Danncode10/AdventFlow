@@ -11,7 +11,7 @@ import { toast } from "sonner";
 const inputClass =
   "w-full bg-secondary border border-border rounded-2xl py-4 pl-12 pr-5 text-sm font-semibold text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20 transition-all";
 
-export function ProfileForm({ profile, roles = [] }: { profile: any, roles?: any[] }) {
+export function ProfileForm({ profile }: { profile: any }) {
   const [success, setSuccess] = useState(false);
   const queryClient = useQueryClient();
 
@@ -136,31 +136,35 @@ export function ProfileForm({ profile, roles = [] }: { profile: any, roles?: any
 
           <div className="space-y-4">
             {/* Group Roles by Status */}
-            {['approved', 'pending', 'rejected'].map((status) => {
-              const statusRoles = roles.filter(r => r.status === status);
-              if (statusRoles.length === 0 && status === 'rejected') return null; // Only show rejected if any exist
+            {[
+              { id: 'approved', label: 'approved', data: profile?.approved_roles || [] },
+              { id: 'pending', label: 'pending', data: profile?.pending_roles || [] },
+              { id: 'rejected', label: 'rejected', data: profile?.rejected_roles || [] }
+            ].map((statusGroup) => {
+              const { id, label, data } = statusGroup;
+              if (data.length === 0 && id === 'rejected') return null; // Only show rejected if any exist
 
               return (
-                <div key={status} className="p-5 bg-secondary/30 rounded-3xl border border-border/40">
+                <div key={id} className="p-5 bg-secondary/30 rounded-3xl border border-border/40">
                   <div className="flex items-center justify-between mb-3">
                     <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 
-                      ${status === 'approved' ? 'text-emerald-500' : status === 'pending' ? 'text-amber-500' : 'text-destructive'}`}>
-                      {status === 'approved' && <ShieldCheck className="w-3 h-3" />}
-                      {status === 'pending' && <History className="w-3 h-3" />}
-                      {status === 'rejected' && <ShieldX className="w-3 h-3" />}
-                      {status}
+                      ${id === 'approved' ? 'text-emerald-500' : id === 'pending' ? 'text-amber-500' : 'text-destructive'}`}>
+                      {id === 'approved' && <ShieldCheck className="w-3 h-3" />}
+                      {id === 'pending' && <History className="w-3 h-3" />}
+                      {id === 'rejected' && <ShieldX className="w-3 h-3" />}
+                      {label}
                     </span>
                     <Badge variant="outline" className="text-[8px] px-1.5 h-4 border-muted-foreground/20 opacity-50 uppercase font-mono tracking-tighter">
-                      {statusRoles.length} NODE{statusRoles.length !== 1 && 'S'}
+                      {data.length} NODE{data.length !== 1 && 'S'}
                     </Badge>
                   </div>
 
-                  {statusRoles.length > 0 ? (
+                  {data.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
-                      {statusRoles.map((r, idx) => (
+                      {data.map((roleName: string, idx: number) => (
                         <div key={idx} className="bg-background/80 border border-border/60 px-4 py-2 rounded-xl flex items-center gap-2 group hover:border-primary/40 transition-colors">
                           <span className="text-xs font-black uppercase tracking-tight italic">
-                            {r.role}
+                            {roleName}
                           </span>
                           <span className="text-[9px] text-muted-foreground font-mono opacity-50">
                             ID: {String(idx + 1).padStart(2, '0')}
@@ -170,7 +174,7 @@ export function ProfileForm({ profile, roles = [] }: { profile: any, roles?: any
                     </div>
                   ) : (
                     <p className="text-[10px] font-semibold italic text-muted-foreground opacity-50 pl-1">
-                      No {status} roles found in current session.
+                      No {label} roles found in current session.
                     </p>
                   )}
                 </div>

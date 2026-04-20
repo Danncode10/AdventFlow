@@ -88,7 +88,7 @@ export function DashboardShell({ overview, user, profile, roles }: DashboardShel
                   {profile ? `${profile.first_name} ${profile.last_name}` : 'Personnel'}
                 </h3>
                 <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-60">
-                  {roles?.find((r: any) => r.status === 'approved')?.role || 'Pending Approval'}
+                  {profile?.approved_roles?.[0] || 'Member'}
                 </p>
               </div>
               <div className="pt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
@@ -139,7 +139,7 @@ export function DashboardShell({ overview, user, profile, roles }: DashboardShel
         </div>
 
         {/* Action Banner / Status Alert */}
-        {roles?.some(r => r.status === 'approved') ? (
+        {profile?.approved_roles?.length > 0 ? (
           <Card className="bg-primary text-primary-foreground border-none shadow-2xl rounded-[3rem] overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-mesh opacity-20 pointer-events-none" />
             <CardContent className="p-12 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10">
@@ -176,7 +176,7 @@ export function DashboardShell({ overview, user, profile, roles }: DashboardShel
                   Ecclesiastical Access is restricted
                 </h3>
                 <p className="text-amber-950/70 text-lg font-medium tracking-tight">
-                  Your request to join <strong>{profile?.entity_name}</strong> as a <strong>{roles?.find(r => r.status === 'pending')?.role || 'Personnel'}</strong> is currently under review by the Mission Administration.
+                  Your request to join <strong>{profile?.entity_name}</strong> as a <strong>{profile?.pending_roles?.[0] || 'Personnel'}</strong> is currently under review by the Mission Administration.
                 </p>
                 <div className="pt-4">
                   <p className="text-xs font-black uppercase tracking-widest opacity-60">Status: Waiting for Elder/Pastor Approval</p>
@@ -278,7 +278,7 @@ export function DashboardShell({ overview, user, profile, roles }: DashboardShel
       <TabsContent value="settings" className="animate-in slide-in-from-bottom-2 duration-500">
         <div className="flex justify-center w-full py-6 md:py-12">
           <Card className="bg-card text-card-foreground border border-border/60 p-10 md:p-16 max-w-3xl w-full shadow-2xl rounded-[3rem] relative overflow-hidden backdrop-blur-xl">
-            <ProfileForm profile={profile} roles={roles} />
+            <ProfileForm profile={profile} />
           </Card>
         </div>
       </TabsContent>

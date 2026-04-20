@@ -89,13 +89,7 @@ export async function getUserProfile() {
       (profile as any).entity_name = entityName;
     }
 
-    // Fetch roles separately
-    const { data: roles } = await supabase
-      .from('user_roles')
-      .select('*')
-      .eq('user_id', user.id);
-
-    return { user, profile, roles: roles || [] };
+    return { user, profile, roles: [] }; // roles array is now handled within profile object
   } catch (err) {
     console.error("Dashboard Service Critical Error:", err);
     return null;
