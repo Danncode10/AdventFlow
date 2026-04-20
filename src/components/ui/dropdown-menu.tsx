@@ -105,6 +105,6 @@ export function DropdownMenuSeparator({ className }: { className?: string }) {
 }
 
 
-export function DropdownMenuLabel({ children }: { children: React.ReactNode }) {
-  return <div className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{children}</div>
+export function DropdownMenuLabel({ children, className }: { children: React.ReactNode, className?: string }) {
+  return <div className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground", className)}>{children}</div>
 }

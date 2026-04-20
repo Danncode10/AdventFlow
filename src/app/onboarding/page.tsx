@@ -49,6 +49,12 @@ export default function OnboardingPage() {
   const [selectedChurch, setSelectedChurch] = React.useState<string | null>(null)
   const [selectedRole, setSelectedRole] = React.useState<string | null>(null)
 
+  // Data lists
+  const [missions, setMissions] = React.useState<{ id: string; name: string }[]>([])
+  const [areas, setAreas] = React.useState<{ id: string; name: string }[]>([])
+  const [divisions, setDivisions] = React.useState<{ id: string; name: string }[]>([])
+  const [churches, setChurches] = React.useState<{ id: string; name: string }[]>([])
+
   // Loading states
   const [loadingMissions, setLoadingMissions] = React.useState(false)
   const [loadingAreas, setLoadingAreas] = React.useState(false)

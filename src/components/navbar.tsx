@@ -87,7 +87,7 @@ export function Navbar({ user }: { user: any }) {
                 </div>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent className="w-72 mt-4 p-2 rounded-[2rem] shadow-2xl border-border/60 bg-card/95 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200">
+              <DropdownMenuContent className="w-72 mt-4 p-2 rounded-[2rem] shadow-2xl border-border/60 bg-card/95 backdrop-blur-xl">
                 <DropdownMenuLabel className="p-4">
                   <div className="flex flex-col space-y-1">
                     <p className="text-xs font-black text-foreground uppercase tracking-widest truncate">

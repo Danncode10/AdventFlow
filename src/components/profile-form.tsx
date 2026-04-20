@@ -136,19 +136,8 @@ export function ProfileForm({ profile }: { profile: any }) {
     last_name: profile?.last_name || "",
   });
 
-  // Auto-calculate age from birthday
-  useEffect(() => {
-    if (formData.birthday) {
-      const birthDate = new Date(formData.birthday);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const m = today.getMonth() - birthDate.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
-      if (age >= 0 && formData.age !== String(age)) {
-        setFormData(prev => ({ ...prev, age: String(age) }));
-      }
-    }
-  }, [formData.birthday]);
+
+
 
   const mutation = useMutation({
     mutationFn: (data: typeof formData) =>
