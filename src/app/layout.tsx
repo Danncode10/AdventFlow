@@ -17,21 +17,21 @@ import { QueryProvider } from "@/components/query-provider";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: `${siteConfig.name} — AI-Native Starter for Builders`,
-  description: "The backbone template for websites, management systems, apps, and startup ideas. Built with Next.js, Supabase, and Tailwind CSS.",
+  title: `${siteConfig.name} — AI-Native Mission Hub for SDA`,
+  description: "Secure hierarchy, financial transparency, and resource sharing for the Seventh-day Adventist Church. Built with Next.js and Supabase.",
   metadataBase: new URL(siteConfig.url),
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteConfig.url,
-    title: `${siteConfig.name} — AI-Native Starter for Builders`,
-    description: "The backbone template for websites, management systems, apps, and startup ideas. Built with Next.js, Supabase, and Tailwind CSS.",
+    title: `${siteConfig.name} — AI-Native Mission Hub for SDA`,
+    description: "Secure hierarchy, financial transparency, and resource sharing for the Seventh-day Adventist Church.",
     siteName: siteConfig.name,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.name} — AI-Native Starter for Builders`,
-    description: "The backbone template for websites, management systems, apps, and startup ideas. Built with Next.js, Supabase, and Tailwind CSS.",
+    title: `${siteConfig.name} — AI-Native Mission Hub for SDA`,
+    description: "Secure hierarchy, financial transparency, and resource sharing for the Seventh-day Adventist Church.",
   },
 };
 
