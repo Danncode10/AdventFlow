@@ -10,52 +10,121 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.4"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
       profiles: {
         Row: {
-          age: number | null
-          birthday: string | null
-          created_at: string
-          email: string | null
+          avatar_url: string | null
           full_name: string | null
-          gender: string | null
           id: string
-          role: Database["public"]["Enums"]["user_role"] | null
+          is_active: boolean | null
+          onboarding_completed: boolean | null
+          structure_id: string | null
+          updated_at: string | null
         }
         Insert: {
-          age?: number | null
-          birthday?: string | null
-          created_at?: string
-          email?: string | null
+          avatar_url?: string | null
           full_name?: string | null
-          gender?: string | null
           id: string
-          role?: Database["public"]["Enums"]["user_role"] | null
+          is_active?: boolean | null
+          onboarding_completed?: boolean | null
+          structure_id?: string | null
+          updated_at?: string | null
         }
         Update: {
-          age?: number | null
-          birthday?: string | null
-          created_at?: string
-          email?: string | null
+          avatar_url?: string | null
           full_name?: string | null
-          gender?: string | null
           id?: string
-          role?: Database["public"]["Enums"]["user_role"] | null
+          is_active?: boolean | null
+          onboarding_completed?: boolean | null
+          structure_id?: string | null
+          updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      structures: {
+        Row: {
+          created_at: string
+          id: string
+          level: Database["public"]["Enums"]["structure_level"]
+          metadata: Json | null
+          name: string
+          parent_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          level: Database["public"]["Enums"]["structure_level"]
+          metadata?: Json | null
+          name: string
+          parent_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          level?: Database["public"]["Enums"]["structure_level"]
+          metadata?: Json | null
+          name?: string
+          parent_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "structures_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      is_admin: { Args: never; Returns: boolean }
+      [_ in never]: never
     }
     Enums: {
-      user_role: "admin" | "user"
+      structure_level: "MISSION" | "AREA" | "DIVISION" | "CHURCH"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -183,7 +252,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      user_role: ["admin", "user"],
+      structure_level: ["MISSION", "AREA", "DIVISION", "CHURCH"],
     },
   },
 } as const

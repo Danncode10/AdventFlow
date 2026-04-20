@@ -1,6 +1,9 @@
 # 🕊️ AdventFlow
 
+**Every mission has its own database**, making this suite accessible to any Mission globally. By simply filling up the database, AdventFlow becomes the dedicated hub for that specific Mission's territory.
+
 **AdventFlow** is an AI-native Next.js 15 & Supabase management suite specifically designed for the **Seventh-day Adventist Church**. It provides a secure hierarchy, financial transparency, and resource sharing capabilities for Missions, Divisions, and local congregations.
+
 
 ---
 
