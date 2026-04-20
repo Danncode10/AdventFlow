@@ -16,10 +16,8 @@ export function ProfileForm({ profile }: { profile: any }) {
   const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState({
-    full_name: profile?.full_name || "",
-    age: profile?.age || "",
-    birthday: profile?.birthday || "",
-    gender: profile?.gender || "",
+    first_name: profile?.first_name || "",
+    last_name: profile?.last_name || "",
   });
 
   // Auto-calculate age from birthday
@@ -38,10 +36,7 @@ export function ProfileForm({ profile }: { profile: any }) {
 
   const mutation = useMutation({
     mutationFn: (data: typeof formData) =>
-      updateProfile({
-        ...data,
-        age: data.age ? parseInt(data.age as string) : undefined,
-      }),
+      updateProfile(data),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["profiles-db"] });
       const previousProfiles = queryClient.getQueryData(["profiles-db"]);
@@ -91,72 +86,38 @@ export function ProfileForm({ profile }: { profile: any }) {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          {/* Full Name */}
+          {/* First Name */}
           <div className="space-y-2">
             <label className="text-[10px] font-mono font-black uppercase tracking-widest text-muted-foreground px-1">
-              Full Name
+              First Name
             </label>
             <div className="relative group">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <input
                 type="text"
-                value={formData.full_name}
-                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                placeholder="John Doe"
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                placeholder="John"
                 className={inputClass}
               />
             </div>
           </div>
 
-          {/* Age */}
+          {/* Last Name */}
           <div className="space-y-2">
             <label className="text-[10px] font-mono font-black uppercase tracking-widest text-muted-foreground px-1">
-              Age
+              Surname
             </label>
             <div className="relative group">
-              <CircleUser className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <input
-                type="number"
-                value={formData.age}
-                onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                placeholder="25"
+                type="text"
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                placeholder="Doe"
                 className={inputClass}
               />
             </div>
-          </div>
-
-          {/* Birthday */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono font-black uppercase tracking-widest text-muted-foreground px-1">
-              Birthday
-            </label>
-            <div className="relative group">
-              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-              <input
-                type="date"
-                value={formData.birthday}
-                onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
-                className={inputClass}
-              />
-            </div>
-          </div>
-
-          {/* Gender */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono font-black uppercase tracking-widest text-muted-foreground px-1">
-              Gender
-            </label>
-            <select
-              value={formData.gender}
-              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-              className="w-full bg-secondary border border-border rounded-2xl py-4 px-5 text-sm font-semibold text-foreground focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
-            >
-              <option value="" disabled>Select gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-              <option value="prefer_not_to_say">Prefer not to say</option>
-            </select>
           </div>
 
         </div>

@@ -23,23 +23,31 @@ export async function getVibeCheckDataPaginated({ pageParam = 0 }: { pageParam?:
   }
 }
 
-// Keeping original for Server Component base render fallback
-export async function getVibeCheckData() {
+export async function getMissionOverview() {
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .limit(3);
+    
+    const [
+      { count: areasCount },
+      { count: divisionsCount },
+      { count: churchesCount },
+      { count: membersCount }
+    ] = await Promise.all([
+      supabase.from('areas').select('*', { count: 'exact', head: true }),
+      supabase.from('divisions').select('*', { count: 'exact', head: true }),
+      supabase.from('churches').select('*', { count: 'exact', head: true }),
+      supabase.from('profiles').select('*', { count: 'exact', head: true })
+    ]);
 
-    if (error) {
-      console.warn("Vibe Check Error. Check your tables:", error.message);
-      return [];
-    }
-
-    return data || [];
+    return {
+      areas: areasCount || 0,
+      divisions: divisionsCount || 0,
+      churches: churchesCount || 0,
+      members: membersCount || 0
+    };
   } catch (err) {
-    return [];
+    console.error("Mission Overview Error:", err);
+    return { areas: 0, divisions: 0, churches: 0, members: 0 };
   }
 }
 
@@ -49,14 +57,47 @@ export async function getUserProfile() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
 
-    const { data: profile } = await supabase
+    // Fetch profile without join first
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single();
 
-    return { user, profile };
+    if (profileError) {
+      console.warn("Profile fetch error:", profileError.message);
+    }
+
+    // Determine current entity and fetch its name
+    let entityName = "Unassigned";
+    if (profile) {
+      if (profile.church_id) {
+        const { data } = await supabase.from('churches').select('name').eq('id', profile.church_id).single();
+        if (data) entityName = data.name;
+      } else if (profile.division_id) {
+        const { data } = await supabase.from('divisions').select('name').eq('id', profile.division_id).single();
+        if (data) entityName = data.name;
+      } else if (profile.area_id) {
+        const { data } = await supabase.from('areas').select('name').eq('id', profile.area_id).single();
+        if (data) entityName = data.name;
+      } else if (profile.mission_id) {
+        const { data } = await supabase.from('missions').select('name').eq('id', profile.mission_id).single();
+        if (data) entityName = data.name;
+      }
+      
+      // Inject helper property for the UI
+      (profile as any).entity_name = entityName;
+    }
+
+    // Fetch roles separately
+    const { data: roles } = await supabase
+      .from('user_roles')
+      .select('*')
+      .eq('user_id', user.id);
+
+    return { user, profile, roles: roles || [] };
   } catch (err) {
+    console.error("Dashboard Service Critical Error:", err);
     return null;
   }
 }

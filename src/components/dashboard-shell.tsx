@@ -17,7 +17,9 @@ import {
   CheckCircle2,
   Clock,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  MapPin,
+  GitBranch
 } from "lucide-react"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -28,13 +30,19 @@ import { PillTabs } from "@/components/ui/pill-tabs"
 import { motion } from "framer-motion"
 
 interface DashboardShellProps {
-  profiles: any[]
+  overview: {
+    areas: number;
+    divisions: number;
+    churches: number;
+    members: number;
+  }
   user: any
   profile: any
+  roles: any[]
   repos: any[]
 }
 
-export function DashboardShell({ profiles, user, profile }: DashboardShellProps) {
+export function DashboardShell({ overview, user, profile, roles }: DashboardShellProps) {
   const [activeTab, setActiveTab] = React.useState("hub")
 
   const DASHBOARD_TABS = [
@@ -75,8 +83,12 @@ export function DashboardShell({ profiles, user, profile }: DashboardShellProps)
                 <Badge className="bg-primary/5 text-primary border-primary/10 font-black uppercase text-[9px] px-3">Personnel Profile</Badge>
               </div>
               <div>
-                <h3 className="text-xl font-black uppercase tracking-tight italic">{profile?.full_name || 'Personnel'}</h3>
-                <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-60">Verified Member</p>
+                <h3 className="text-xl font-black uppercase tracking-tight italic">
+                  {profile ? `${profile.first_name} ${profile.last_name}` : 'Personnel'}
+                </h3>
+                <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-60">
+                  {roles?.find((r: any) => r.status === 'approved')?.role || 'Pending Approval'}
+                </p>
               </div>
               <div className="pt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
                 View Credentials <ChevronRight className="w-4 h-4" />
@@ -94,8 +106,10 @@ export function DashboardShell({ profiles, user, profile }: DashboardShellProps)
                 <Badge className="bg-primary/5 text-primary border-primary/10 font-black uppercase text-[9px] px-3">Ecclesiastical Placement</Badge>
               </div>
               <div>
-                <h3 className="text-xl font-black uppercase tracking-tight italic">Central SDA Church</h3>
-                <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-60">Northern Luzon Mission</p>
+                <h3 className="text-xl font-black uppercase tracking-tight italic">
+                  {profile?.entity_name || 'Unassigned Structure'}
+                </h3>
+                <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-60">Ecclesiastical Location</p>
               </div>
               <div className="pt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
                 Church Directory <ChevronRight className="w-4 h-4" />
@@ -123,61 +137,93 @@ export function DashboardShell({ profiles, user, profile }: DashboardShellProps)
           </Card>
         </div>
 
-        {/* Action Banner */}
-        <Card className="bg-primary text-primary-foreground border-none shadow-2xl rounded-[3rem] overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-mesh opacity-20 pointer-events-none" />
-          <CardContent className="p-12 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10">
-            <div className="space-y-4 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest">
-                <Clock className="w-3 h-3" /> Digital Remittance Update
+        {/* Action Banner / Status Alert */}
+        {roles?.some(r => r.status === 'approved') ? (
+          <Card className="bg-primary text-primary-foreground border-none shadow-2xl rounded-[3rem] overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-mesh opacity-20 pointer-events-none" />
+            <CardContent className="p-12 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10">
+              <div className="space-y-4 max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest">
+                  <Clock className="w-3 h-3" /> Digital Remittance Update
+                </div>
+                <h3 className="text-3xl md:text-5xl font-black tracking-tighter uppercase italic leading-tight">
+                  Authorize Your Local Mission Financials
+                </h3>
+                <p className="text-primary-foreground/70 text-lg font-medium tracking-tight">
+                  The new Tithe & Offering reporting portal is now live for all Church Treasurers. Submit weekly returns directly to the Mission Hub.
+                </p>
+                <div className="pt-4">
+                  <button className="px-8 py-4 bg-primary-foreground text-primary font-black rounded-2xl uppercase tracking-widest text-sm shadow-xl hover:scale-105 transition-all">
+                    Access Treasury
+                  </button>
+                </div>
               </div>
-              <h3 className="text-3xl md:text-5xl font-black tracking-tighter uppercase italic leading-tight">
-                Authorize Your Local Mission Financials
-              </h3>
-              <p className="text-primary-foreground/70 text-lg font-medium tracking-tight">
-                The new Tithe & Offering reporting portal is now live for all Church Treasurers. Submit weekly returns directly to the Mission Hub.
-              </p>
-              <div className="pt-4">
-                <button className="px-8 py-4 bg-primary-foreground text-primary font-black rounded-2xl uppercase tracking-widest text-sm shadow-xl hover:scale-105 transition-all">
-                  Access Treasury
-                </button>
+              <div className="hidden md:flex w-48 h-48 bg-white/5 rounded-full border border-white/10 items-center justify-center backdrop-blur-3xl shrink-0">
+                <Wallet className="w-20 h-20 opacity-40 text-primary-foreground" />
               </div>
-            </div>
-            <div className="hidden md:flex w-48 h-48 bg-white/5 rounded-full border border-white/10 items-center justify-center backdrop-blur-3xl shrink-0">
-              <Wallet className="w-20 h-20 opacity-40 text-primary-foreground" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="bg-amber-500 text-amber-950 border-none shadow-2xl rounded-[3rem] overflow-hidden relative">
+            <div className="absolute inset-0 bg-white/10 pointer-events-none" />
+            <CardContent className="p-12 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10">
+              <div className="space-y-4 max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-black/10 rounded-full text-[10px] font-black uppercase tracking-widest">
+                  <ShieldAlert className="w-3 h-3" /> Verification Pending
+                </div>
+                <h3 className="text-3xl md:text-5xl font-black tracking-tighter uppercase italic leading-tight">
+                  Ecclesiastical Access is restricted
+                </h3>
+                <p className="text-amber-950/70 text-lg font-medium tracking-tight">
+                  Your request to join <strong>{profile?.entity_name}</strong> as a <strong>{roles?.find(r => r.status === 'pending')?.role || 'Personnel'}</strong> is currently under review by the Mission Administration.
+                </p>
+                <div className="pt-4">
+                  <p className="text-xs font-black uppercase tracking-widest opacity-60">Status: Waiting for Elder/Pastor Approval</p>
+                </div>
+              </div>
+              <div className="hidden md:flex w-48 h-48 bg-black/5 rounded-full border border-black/10 items-center justify-center backdrop-blur-3xl shrink-0">
+                <Clock className="w-20 h-20 opacity-40" />
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </TabsContent>
 
-      {/* 2. Personnel Directory */}
+      {/* 2. Mission Statistics */}
       <TabsContent value="personnel" className="space-y-8 animate-in slide-in-from-bottom-2 duration-500">
         <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-black uppercase tracking-tighter italic">Personnel Directory</h2>
-          <p className="text-muted-foreground font-semibold italic">Directory access restricted by Ecclesiastical Level</p>
+          <h2 className="text-3xl font-black uppercase tracking-tighter italic">Mission Statistics</h2>
+          <p className="text-muted-foreground font-semibold italic">Organizational growth and ecclesiastical scale</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {profiles.map((p, i) => (
-            <Card key={i} className="bg-card border border-border/50 hover:border-primary/20 transition-all rounded-[2rem] overflow-hidden group">
-              <CardHeader className="flex flex-row items-center gap-4 p-6 pb-4">
-                <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary/5 transition-colors">
-                  <User className="w-6 h-6 text-muted-foreground group-hover:text-primary" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { label: "Mission Personnel", value: overview.members, icon: User, color: "text-blue-500", bg: "bg-blue-500/10" },
+            { label: "Strategic Areas", value: overview.areas, icon: MapPin, color: "text-amber-500", bg: "bg-amber-500/10" },
+            { label: "Divisions & Districts", value: overview.divisions, icon: GitBranch, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+            { label: "Local Churches", value: overview.churches, icon: ChurchIcon, color: "text-primary", bg: "bg-primary/10" },
+          ].map((stat, i) => (
+            <Card key={i} className="bg-card border border-border/50 rounded-[2rem] overflow-hidden group hover:border-primary/20 transition-all">
+              <CardContent className="p-8 space-y-6">
+                <div className={`w-12 h-12 rounded-2xl ${stat.bg} flex items-center justify-center ${stat.color} group-hover:scale-110 transition-transform`}>
+                  <stat.icon className="w-6 h-6" />
                 </div>
-                <div className="space-y-0.5">
-                  <CardTitle className="text-base font-black uppercase tracking-tight">{p.full_name || 'Personnel'}</CardTitle>
-                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em]">{p.role || 'Member'}</CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent className="px-6 pb-6 pt-0 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Badge className="bg-muted text-muted-foreground border-none font-black text-[8px] uppercase px-2 py-0.5">Central SDA</Badge>
-                  <Badge className="bg-primary/5 text-primary border-none font-black text-[8px] uppercase px-2 py-0.5 italic">Verified</Badge>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
+                  <h4 className="text-4xl font-black tracking-tight text-foreground">{stat.value}</h4>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
+
+        <Card className="bg-secondary/30 border border-border/40 p-10 rounded-[3rem]">
+          <h3 className="text-xl font-black uppercase italic mb-4">Hierarchical integrity</h3>
+          <p className="text-muted-foreground text-sm font-medium leading-relaxed italic italic">
+            The counts above represent live nodes within the Adventist Sanctuary Hub. 
+            Every Church belongs to a verified District, ensuring ecclesiastical transparency and reporting accuracy.
+          </p>
+        </Card>
       </TabsContent>
 
       {/* 3. Sanctuary (Resources) */}

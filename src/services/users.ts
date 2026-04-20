@@ -9,18 +9,20 @@ export async function getAllProfiles() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
-  // Check if current user is admin
-  const { data: profile } = await supabase
-    .from('profiles')
+  // Check if current user has an admin role
+  const { data: roles } = await supabase
+    .from('user_roles')
     .select('role')
-    .eq('id', user.id)
-    .single();
+    .eq('user_id', user.id)
+    .eq('status', 'approved');
 
-  if (profile?.role !== 'admin') {
-    // Regular users might only see public info, but for this demo:
+  const isAdmin = roles?.some(r => r.role === 'MISSION_ADMIN' || r.role === 'SYSTEM_ADMIN');
+
+  if (!isAdmin) {
+    // Regular users might only see public info
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, full_name, role');
+      .select('id, first_name, last_name');
     return profiles || [];
   }
 
@@ -47,10 +49,9 @@ export async function getProfile() {
 }
 
 export async function updateProfile(updates: {
-  full_name?: string;
-  age?: number;
-  birthday?: string;
-  gender?: string;
+  first_name?: string;
+  last_name?: string;
+  avatar_url?: string;
 }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

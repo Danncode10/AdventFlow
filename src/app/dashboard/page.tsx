@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { DashboardShell } from "@/components/dashboard-shell";
-import { getUserProfile, getVibeCheckData } from "@/services/dashboard";
+import { getUserProfile, getMissionOverview } from "@/services/dashboard";
 import { redirect } from "next/navigation";
 import { creatorRepos } from "@/lib/config";
 
@@ -12,8 +12,13 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const { user, profile } = session;
-  const profiles = await getVibeCheckData() || [];
+  const { user, profile, roles = [] } = session;
+
+  // Redirect to onboarding if no placement is set
+  if (profile && !profile.mission_id && !profile.area_id && !profile.division_id && !profile.church_id) {
+    redirect("/onboarding");
+  }
+  const overview = await getMissionOverview();
   const repos = creatorRepos;
 
   return (
@@ -26,14 +31,15 @@ export default async function DashboardPage() {
             Mission Control
           </h1>
           <p className="mt-2 text-muted-foreground font-semibold italic">
-            Welcome back, {profile?.full_name || user.email?.split("@")[0]}. Systems are nominal.
+            Welcome back, {profile?.first_name || user.email?.split("@")[0]}. Systems are nominal.
           </p>
         </div>
 
         <DashboardShell 
           user={user} 
           profile={profile} 
-          profiles={profiles} 
+          roles={roles}
+          overview={overview} 
           repos={repos} 
         />
       </main>
