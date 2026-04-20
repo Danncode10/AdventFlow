@@ -15,15 +15,19 @@ Before building features, we must define the "World" in which the data lives.
 - **Recursive Schema**: Create the structures table in Supabase.
 - **The Checkpoint**: Run `npm run checkpoint` immediately after creating the table so your AI understands the parent-child relationship of the Church levels.
 
-### Phase 2: Identity & Access (Scoped Onboarding)
-We move from "Users" to "Members with Roles."
-- **Multi-Role Join Table**: Create a `user_roles` table. This allows a user to be both a "Pastor" and a "Scheduler."
-- **Request-to-Join Flow**: Build a searchable dropdown for all 2,000+ churches.
-- **Scoped Approval Logic**: A request for "Central Church" is visible only to the Elder of that church and the Pastor of that Division.
-- **Hardened RLS**: Use the "Zero-Hallucination" loop to write RLS policies that prevent a Treasurer in "Area A" from seeing the books in "Area B."
+### Phase 2: Identity & Access (The Chain of Command)
+We move from "Users" to "Members with Scoped Roles."
+- **Baseline Membership**: Every user starts as a `MEMBER` upon church selection.
+- **Tiered Approval Logic**: 
+  - Elders approve Members/Treasurers.
+  - Pastors approve Elders.
+  - Mission Admins approve Pastors.
+- **Multi-Role Join Table**: Updated `user_roles` with `is_approved` and `approved_by` columns for a digital audit trail.
+- **Data Privacy Act (RA 10173)**: Consent is now a hard-gate before onboarding completion.
 
 ### Phase 3: The Content Engine (Blog & Resources)
 The "Digital Bulletin" and theological library.
+- **Role-Gated Posting**: Only verified "Media Team" or "Elders" can publish to the Digital Bulletin.
 - **The Tiptap Editor**: Integrate the headless editor. Add extensions for YouTube embeds and link-pasting.
 - **The "Storage Hack"**: Create the `resources` table to store Google Drive IDs.
 - **Client-Side Compression**: Use `browser-image-compression` for blog cover photos to keep Supabase storage footprint tiny.
