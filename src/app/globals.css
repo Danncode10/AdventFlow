@@ -1,22 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  /* This tells the AI: "primary" IS your blue vibe */
-  --color-primary: #2563eb;
-  --color-primary-foreground: #ffffff;
+  /* Deep Mission Blue - The identity of AdventFlow */
+  --color-primary: #1e3a8a; 
+  --color-primary-foreground: #f8fafc;
 
   --color-background: #ffffff;
   --color-foreground: #020617;
 
+  /* Glassmorphism-ready card colors */
   --color-card: #ffffff;
   --color-card-foreground: #020617;
 
+  /* Sophisticated grays for the "Engineering Edge" */
   --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #1e293b;
+  --color-muted: #f8fafc;
+  --color-muted-foreground: #64748b;
+  --color-accent: #eff6ff;
+  --color-accent-foreground: #1e3a8a;
+  
   --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #1e40af;
 
-  /* Matches your [3rem] preference but as a reusable variable */
+  /* The signature DannFlow hyper-radius */
   --radius-5xl: 3rem;
+  --radius-3xl: 1.5rem;
+  --radius-xl: 1rem;
 }
+
 
 @layer base {
   body {
