@@ -113,3 +113,63 @@ export async function requestRole(roleName: string) {
   if (error) throw error;
   return { success: true };
 }
+
+export async function requestMultipleRoles(roleNames: string[]) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('pending_roles, approved_roles')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile) throw new Error('Profile not found');
+
+  // Filter out roles that are already approved or pending
+  const newRoles = roleNames.filter(r => 
+    !profile.approved_roles?.includes(r) && 
+    !profile.pending_roles?.includes(r)
+  );
+
+  if (newRoles.length === 0) return { success: true };
+
+  const updatedPending = [...(profile.pending_roles || []), ...newRoles];
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ 
+      pending_roles: updatedPending 
+    })
+    .eq('id', user.id);
+
+  if (error) throw error;
+  return { success: true };
+}
+
+export async function cancelPendingRole(roleName: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('pending_roles')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile) throw new Error('Profile not found');
+
+  const updatedPending = (profile.pending_roles || []).filter((r: string) => r !== roleName);
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ 
+      pending_roles: updatedPending 
+    })
+    .eq('id', user.id);
+
+  if (error) throw error;
+  return { success: true };
+}

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { updateProfile, getAvailableRoles, requestRole } from "@/services/users";
-import { User, Calendar, CircleUser, Loader2, CheckCircle2, ShieldCheck, ShieldAlert, ShieldX, History, MapPin, Church, Compass, Layout, PlusCircle, Check, Info, Music, Video, PenTool, Calculator, Scale, Users, Banknote } from "lucide-react";
+import { User, Calendar, CircleUser, Loader2, CheckCircle2, ShieldCheck, ShieldAlert, ShieldX, History, MapPin, Church, Compass, Layout, PlusCircle, Check, Info, Music, Video, PenTool, Calculator, Scale, Users, Banknote, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { updateProfile, getAvailableRoles, requestRole, requestMultipleRoles, cancelPendingRole } from "@/services/users";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -63,22 +64,20 @@ function RoleTooltip({ text }: { text: string }) {
 function RoleChip({ 
   role, 
   profile, 
-  requestingRole, 
-  setRequestingRole, 
-  requestRole, 
-  queryClient 
+  stagedRoles,
+  toggleStagedRole,
+  isSaving
 }: { 
   role: any, 
   profile: any, 
-  requestingRole: string | null, 
-  setRequestingRole: (val: string | null) => void,
-  requestRole: (name: string) => Promise<any>,
-  queryClient: any
+  stagedRoles: string[],
+  toggleStagedRole: (name: string) => void,
+  isSaving: boolean
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const isApproved = profile?.approved_roles?.includes(role.name);
   const isPending = profile?.pending_roles?.includes(role.name);
-  const isRequestedInSession = requestingRole === role.name;
+  const isStaged = stagedRoles.includes(role.name);
   const isDisabled = isApproved || isPending;
   
   const Icon = roleIcons[role.name] || Info;
@@ -87,37 +86,27 @@ function RoleChip({
     <div className="relative">
       <button
         type="button"
-        disabled={isDisabled || isRequestedInSession}
+        disabled={isDisabled || isSaving}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={async () => {
-          setRequestingRole(role.name);
-          try {
-            await requestRole(role.name);
-            toast.success("Request Manifested", { description: `${role.name} is now pending verification.` });
-            queryClient.invalidateQueries({ queryKey: ["profiles-db"] });
-          } catch (err: any) {
-            toast.error(err.message);
-          } finally {
-            setRequestingRole(null);
-          }
-        }}
+        onClick={() => toggleStagedRole(role.name)}
         className={`
           group flex items-center gap-2.5 px-5 py-2.5 rounded-full border transition-all duration-300
           ${isDisabled 
             ? 'bg-primary/10 border-primary/20 text-primary opacity-60 cursor-not-allowed' 
-            : 'bg-background border-border text-foreground hover:border-primary/60 hover:shadow-md active:scale-95'
+            : isStaged
+              ? 'bg-primary/5 border-primary border-dashed text-primary shadow-sm ring-1 ring-primary/20'
+              : 'bg-background border-border text-foreground hover:border-primary/60 hover:shadow-md active:scale-95'
           }
-          ${isRequestedInSession ? 'animate-pulse' : ''}
         `}
       >
-        <Icon className={`w-3.5 h-3.5 ${isDisabled ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'}`} />
+        <Icon className={`w-3.5 h-3.5 ${isDisabled || isStaged ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'}`} />
         <span className="text-[11px] font-bold tracking-tight uppercase italic whitespace-nowrap">
           {role.name}
+          {isStaged && <span className="ml-1 text-primary animate-pulse">*</span>}
         </span>
         {isApproved && <Check className="w-3 h-3 text-emerald-500 ml-1" />}
         {isPending && <History className="w-3 h-3 text-amber-500 ml-1" />}
-        {isRequestedInSession && <Loader2 className="w-3 h-3 animate-spin text-primary ml-1" />}
       </button>
 
       <AnimatePresence>
@@ -132,7 +121,8 @@ function RoleChip({
 export function ProfileForm({ profile }: { profile: any }) {
   const [success, setSuccess] = useState(false);
   const [availableRoles, setAvailableRoles] = useState<any[]>([]);
-  const [requestingRole, setRequestingRole] = useState<string | null>(null);
+  const [stagedRoles, setStagedRoles] = useState<string[]>([]);
+  const [isSavingRoles, setIsSavingRoles] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -185,6 +175,40 @@ export function ProfileForm({ profile }: { profile: any }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     mutation.mutate(formData);
+  };
+
+  const handleSaveRoles = async () => {
+    setIsSavingRoles(true);
+    try {
+      await requestMultipleRoles(stagedRoles);
+      toast.success("Requests Manifested", { description: `${stagedRoles.length} roles are now pending verification.` });
+      setStagedRoles([]);
+      queryClient.invalidateQueries({ queryKey: ["profiles-db"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsSavingRoles(false);
+    }
+  };
+
+  const handleCancelRole = async (roleName: string) => {
+    if (window.confirm(`Remove Role Request?\n\nThis will cancel your pending request for ${roleName}. You can request it again at any time.`)) {
+      try {
+        await cancelPendingRole(roleName);
+        toast.success("Request Cancelled");
+        queryClient.invalidateQueries({ queryKey: ["profiles-db"] });
+      } catch (err: any) {
+        toast.error(err.message);
+      }
+    }
+  };
+
+  const toggleStagedRole = (roleName: string) => {
+    setStagedRoles(prev => 
+      prev.includes(roleName) 
+        ? prev.filter(r => r !== roleName) 
+        : [...prev, roleName]
+    );
   };
 
   return (
@@ -332,8 +356,16 @@ export function ProfileForm({ profile }: { profile: any }) {
                     {data.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
                         {data.map((roleName: string, idx: number) => (
-                          <div key={idx} className="bg-background border border-border/60 px-5 py-2.5 rounded-2xl flex items-center gap-3">
+                          <div key={idx} className="bg-background border border-border/60 px-5 py-2.5 rounded-2xl flex items-center gap-3 group relative overflow-hidden">
                             <span className="text-xs font-black uppercase tracking-tight italic">{roleName}</span>
+                            {id === 'pending' && (
+                              <button 
+                                onClick={() => handleCancelRole(roleName)}
+                                className="p-1 hover:bg-destructive/10 rounded-full transition-colors text-muted-foreground hover:text-destructive"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -390,10 +422,9 @@ export function ProfileForm({ profile }: { profile: any }) {
                           key={role.id}
                           role={role}
                           profile={profile}
-                          requestingRole={requestingRole}
-                          setRequestingRole={setRequestingRole}
-                          requestRole={requestRole}
-                          queryClient={queryClient}
+                          stagedRoles={stagedRoles}
+                          toggleStagedRole={toggleStagedRole}
+                          isSaving={isSavingRoles}
                         />
                       ))}
                     </div>
@@ -410,6 +441,30 @@ export function ProfileForm({ profile }: { profile: any }) {
                 );
               })}
             </div>
+
+            {stagedRoles.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="pt-6 border-t border-border flex items-center justify-between"
+              >
+                <div className="flex flex-col">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-primary italic">
+                    {stagedRoles.length} role{stagedRoles.length > 1 ? 's' : ''} selected
+                  </p>
+                  <p className="text-[9px] text-muted-foreground font-semibold uppercase tracking-wider italic">
+                    Staged but not yet Manifested
+                  </p>
+                </div>
+                <Button 
+                  onClick={handleSaveRoles}
+                  disabled={isSavingRoles}
+                  className="rounded-full px-8 h-12 uppercase tracking-widest font-black italic shadow-lg shadow-primary/20"
+                >
+                  {isSavingRoles ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Changes"}
+                </Button>
+              </motion.div>
+            )}
           </div>
 
         </div>
