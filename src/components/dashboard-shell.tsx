@@ -19,7 +19,8 @@ import {
   ExternalLink,
   ChevronRight,
   MapPin,
-  GitBranch
+  GitBranch,
+  ShieldAlert
 } from "lucide-react"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -277,7 +278,7 @@ export function DashboardShell({ overview, user, profile, roles }: DashboardShel
       <TabsContent value="settings" className="animate-in slide-in-from-bottom-2 duration-500">
         <div className="flex justify-center w-full py-6 md:py-12">
           <Card className="bg-card text-card-foreground border border-border/60 p-10 md:p-16 max-w-3xl w-full shadow-2xl rounded-[3rem] relative overflow-hidden backdrop-blur-xl">
-            <ProfileForm profile={profile} />
+            <ProfileForm profile={profile} roles={roles} />
           </Card>
         </div>
       </TabsContent>
