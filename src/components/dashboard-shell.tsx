@@ -185,6 +185,31 @@ export function DashboardShell({ overview, user, profile, roles, missions }: Das
           </Card>
         )}
 
+        {/* Clerk Office Access Card — visible only to Church Clerks */}
+        {profile?.approved_roles?.includes("Church Clerk") && (
+          <Card className="bg-card border border-border/60 rounded-[2.5rem] overflow-hidden shadow-sm">
+            <CardContent className="p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="flex items-center gap-5">
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <FileText className="w-7 h-7 text-primary" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Your Role Access</p>
+                  <h3 className="text-xl font-black tracking-tighter uppercase italic text-foreground leading-none">Clerk Office</h3>
+                  <p className="text-sm text-muted-foreground font-medium mt-1">Manage member registry, transfers & reports for your church.</p>
+                </div>
+              </div>
+              <Link href="/dashboard/clerk" className="shrink-0">
+                <div className="flex items-center gap-2 px-6 py-3.5 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity min-h-[48px]">
+                  <FileText className="w-4 h-4" />
+                  Open Clerk Office
+                  <ChevronRight className="w-4 h-4" />
+                </div>
+              </Link>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Quick Actions Grid */}
         <div>
           <div className="flex items-center justify-between mb-6">
