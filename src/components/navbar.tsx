@@ -17,9 +17,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "Features", href: "#tools" },
-  { label: "Who Is It For", href: "#who" },
+  { label: "How It Works", href: "/#how-it-works" },
+  { label: "Features", href: "/#tools" },
+  { label: "Who Is It For", href: "/#who" },
   { label: "Mission", href: "/missions" },
 ];
 
