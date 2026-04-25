@@ -16,7 +16,7 @@ export async function getAllProfiles() {
     .eq('user_id', user.id)
     .eq('status', 'approved');
 
-  const isAdmin = roles?.some(r => r.role === 'MISSION_ADMIN' || r.role === 'SYSTEM_ADMIN');
+  const isAdmin = roles?.some(r => r.role === 'Mission Admin' || r.role === 'System Admin');
 
   if (!isAdmin) {
     // Regular users might only see public info
