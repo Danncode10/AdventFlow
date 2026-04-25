@@ -20,6 +20,7 @@ const navLinks = [
   { label: "How It Works", href: "#how-it-works" },
   { label: "Features", href: "#tools" },
   { label: "Who Is It For", href: "#who" },
+  { label: "Mission", href: "/missions" },
 ];
 
 export function Navbar({ user }: { user: any }) {

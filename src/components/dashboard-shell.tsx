@@ -28,6 +28,7 @@ import {
   FileText,
   ArrowUpRight,
   TrendingUp,
+  Globe,
 } from "lucide-react"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -36,6 +37,15 @@ import { ProfileForm } from "./profile-form"
 import { SecurityForm } from "./security-form"
 import { PillTabs } from "@/components/ui/pill-tabs"
 import { motion } from "framer-motion"
+
+interface Mission {
+  id: string
+  name: string
+  slug: string
+  address: string | null
+  logo_url: string | null
+  created_at: string
+}
 
 interface DashboardShellProps {
   overview: {
@@ -48,6 +58,7 @@ interface DashboardShellProps {
   profile: any
   roles: any[]
   repos: any[]
+  missions: Mission[]
 }
 
 const QUICK_ACTIONS = [
@@ -59,12 +70,13 @@ const QUICK_ACTIONS = [
   { icon: Bell, label: "Approvals", desc: "Pending requests", color: "text-primary", bg: "bg-primary/10", href: "#" },
 ]
 
-export function DashboardShell({ overview, user, profile, roles }: DashboardShellProps) {
+export function DashboardShell({ overview, user, profile, roles, missions }: DashboardShellProps) {
   const [activeTab, setActiveTab] = React.useState("hub")
 
   const DASHBOARD_TABS = [
     { id: "hub", label: "Hub", icon: LayoutDashboard },
     { id: "personnel", label: "Personnel", icon: Users2 },
+    { id: "missions", label: "Mission", icon: Globe },
     { id: "sanctuary", label: "Sanctuary", icon: BookOpen },
     { id: "treasury", label: "Treasury", icon: Wallet },
     { id: "security", label: "Security", icon: ShieldCheck },
@@ -287,7 +299,68 @@ export function DashboardShell({ overview, user, profile, roles }: DashboardShel
         </Card>
       </TabsContent>
 
-      {/* 3. Sanctuary (Resources) */}
+      {/* 3. Missions */}
+      <TabsContent value="missions" className="space-y-10 animate-in slide-in-from-bottom-2 duration-500">
+        <div className="flex flex-col gap-2">
+          <h2 className="text-3xl font-black uppercase tracking-tighter italic">Mission Network</h2>
+          <p className="text-muted-foreground font-semibold italic">Select a mission to view its details and structure</p>
+        </div>
+
+        {missions.length === 0 ? (
+          <div className="min-h-[300px] flex flex-col items-center justify-center text-center p-12 bg-muted/20 border border-dashed border-border rounded-[3rem] gap-6">
+            <div className="w-16 h-16 bg-primary/10 rounded-3xl flex items-center justify-center text-primary">
+              <Globe className="w-8 h-8" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-xl font-black uppercase italic tracking-tighter">No Missions Found</h3>
+              <p className="text-muted-foreground font-semibold italic text-sm">No missions have been configured yet.</p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {missions.map((mission) => (
+              <a
+                key={mission.id}
+                href={`/missions/${mission.slug}`}
+                className="group block"
+              >
+                <Card className="bg-card border border-border/60 shadow-xl rounded-[2.5rem] overflow-hidden hover:border-primary/30 hover:shadow-2xl transition-all duration-300 p-1 h-full">
+                  <div className="p-8 space-y-6 flex flex-col h-full">
+                    <div className="flex items-start justify-between">
+                      <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all">
+                        {mission.logo_url ? (
+                          <img src={mission.logo_url} alt={mission.name} className="w-8 h-8 object-contain" />
+                        ) : (
+                          <Globe className="w-7 h-7" />
+                        )}
+                      </div>
+                      <Badge className="bg-primary/5 text-primary border-primary/10 font-black uppercase text-[9px] px-3">Mission</Badge>
+                    </div>
+
+                    <div className="flex-1 space-y-2">
+                      <h3 className="text-xl font-black uppercase tracking-tight italic leading-tight group-hover:text-primary transition-colors">
+                        {mission.name}
+                      </h3>
+                      {mission.address && (
+                        <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-60 flex items-center gap-1.5">
+                          <MapPin className="w-3 h-3 shrink-0" />
+                          {mission.address}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="pt-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary group-hover:gap-3 transition-all">
+                      View Mission <ChevronRight className="w-4 h-4" />
+                    </div>
+                  </div>
+                </Card>
+              </a>
+            ))}
+          </div>
+        )}
+      </TabsContent>
+
+      {/* 4. Sanctuary (Resources) */}
       <TabsContent value="sanctuary" className="space-y-10 animate-in slide-in-from-bottom-2 duration-500">
         <div className="flex flex-col gap-2">
           <h2 className="text-3xl font-black uppercase tracking-tighter italic">The Sanctuary</h2>
@@ -312,7 +385,7 @@ export function DashboardShell({ overview, user, profile, roles }: DashboardShel
         </div>
       </TabsContent>
 
-      {/* 4. Treasury (Placeholder) */}
+      {/* 5. Treasury (Placeholder) */}
       <TabsContent value="treasury" className="animate-in slide-in-from-bottom-2 duration-500">
         <div className="min-h-[400px] flex flex-col items-center justify-center text-center p-12 bg-muted/20 border border-dashed border-border rounded-[3rem] gap-6">
           <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center text-primary">
@@ -326,7 +399,7 @@ export function DashboardShell({ overview, user, profile, roles }: DashboardShel
         </div>
       </TabsContent>
 
-      {/* 5. Security */}
+      {/* 6. Security */}
       <TabsContent value="security" className="animate-in slide-in-from-bottom-2 duration-500">
         <div className="flex justify-center w-full py-6 md:py-12">
           <Card className="bg-card text-card-foreground border border-border/60 p-10 md:p-16 max-w-3xl w-full shadow-2xl rounded-[3rem] relative overflow-hidden backdrop-blur-xl">
@@ -335,7 +408,7 @@ export function DashboardShell({ overview, user, profile, roles }: DashboardShel
         </div>
       </TabsContent>
 
-      {/* 6. Profile Settings */}
+      {/* 7. Profile Settings */}
       <TabsContent value="settings" className="animate-in slide-in-from-bottom-2 duration-500">
         <div className="flex justify-center w-full py-6 md:py-12">
           <Card className="bg-card text-card-foreground border border-border/60 p-10 md:p-16 max-w-3xl w-full shadow-2xl rounded-[3rem] relative overflow-hidden backdrop-blur-xl">

@@ -9,6 +9,27 @@ export async function getMissionsList() {
   return data;
 }
 
+export async function getAllMissions() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('missions')
+    .select('id, name, slug, address, logo_url, created_at')
+    .order('name');
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getMissionBySlug(slug: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('missions')
+    .select('id, name, slug, address, logo_url, created_at')
+    .eq('slug', slug)
+    .single();
+  if (error) throw error;
+  return data;
+}
+
 export async function getAreasByMission(missionId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase

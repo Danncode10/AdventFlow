@@ -2,6 +2,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { DashboardShell } from "@/components/dashboard-shell";
 import { getUserProfile, getMissionOverview } from "@/services/dashboard";
+import { getAllMissions } from "@/services/onboarding";
 import { redirect } from "next/navigation";
 import { creatorRepos } from "@/lib/config";
 
@@ -18,7 +19,10 @@ export default async function DashboardPage() {
   if (profile && !profile.mission_id && !profile.area_id && !profile.division_id && !profile.church_id) {
     redirect("/onboarding");
   }
-  const overview = await getMissionOverview();
+  const [overview, missions] = await Promise.all([
+    getMissionOverview(),
+    getAllMissions(),
+  ]);
   const repos = creatorRepos;
 
   return (
@@ -35,12 +39,13 @@ export default async function DashboardPage() {
           </p>
         </div>
 
-        <DashboardShell 
-          user={user} 
-          profile={profile} 
+        <DashboardShell
+          user={user}
+          profile={profile}
           roles={roles}
-          overview={overview} 
-          repos={repos} 
+          overview={overview}
+          repos={repos}
+          missions={missions}
         />
       </main>
 
