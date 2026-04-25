@@ -61,6 +61,39 @@ export async function getDivisionsWithChurches(missionId: string) {
   return data ?? [];
 }
 
+export async function getAreasByMission(missionId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('areas')
+    .select('id, name')
+    .eq('mission_id', missionId)
+    .order('name');
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getDivisionsByArea(areaId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('divisions')
+    .select('id, name')
+    .eq('area_id', areaId)
+    .order('name');
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getChurchesByDivision(divisionId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('churches')
+    .select('id, name')
+    .eq('division_id', divisionId)
+    .order('name');
+  if (error) throw error;
+  return data ?? [];
+}
+
 export async function getChurchesByMission(missionId: string) {
   const supabase = await createClient();
   const { data: areas, error: areaErr } = await supabase
