@@ -20,22 +20,22 @@ const ITEMS_PER_PAGE = 6
 function MissionCard({ mission }: { mission: Mission }) {
   return (
     <a href={`/missions/${mission.slug}`} className="group block h-full">
-      <Card className="relative h-full overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
-        {/* Top accent bar */}
-        <div className="h-1 w-full bg-gradient-to-r from-primary/60 via-primary to-primary/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <Card className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-xl">
+        {/* Animated gradient top border */}
+        <div className="absolute inset-x-0 top-0 h-[3px] rounded-t-2xl bg-gradient-to-r from-primary to-primary/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-        <CardContent className="flex h-full flex-col gap-5 p-6">
-          {/* Icon row */}
+        <CardContent className="flex flex-1 flex-col gap-4 p-6 pt-7">
+          {/* Icon + Badge row */}
           <div className="flex items-center justify-between">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform duration-300 group-hover:scale-105">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20 transition-transform duration-300 group-hover:scale-105 group-hover:bg-primary/20">
               {mission.logo_url ? (
                 <img
                   src={mission.logo_url}
                   alt={mission.name}
-                  className="h-7 w-7 object-contain"
+                  className="h-6 w-6 object-contain"
                 />
               ) : (
-                <Globe className="h-6 w-6" />
+                <Globe className="h-5 w-5" />
               )}
             </div>
             <Badge
@@ -47,8 +47,8 @@ function MissionCard({ mission }: { mission: Mission }) {
           </div>
 
           {/* Name + address */}
-          <div className="flex-1 space-y-2">
-            <h2 className="font-serif text-[18px] font-semibold leading-snug tracking-tight text-foreground transition-colors group-hover:text-primary">
+          <div className="flex-1 space-y-1.5">
+            <h2 className="font-serif text-[17px] font-semibold leading-snug tracking-tight text-foreground transition-colors group-hover:text-primary">
               {mission.name}
             </h2>
             {mission.address ? (
@@ -57,14 +57,14 @@ function MissionCard({ mission }: { mission: Mission }) {
                 {mission.address}
               </p>
             ) : (
-              <p className="text-[12px] italic text-muted-foreground/50">
+              <p className="text-[12px] italic text-muted-foreground/40">
                 No address on file
               </p>
             )}
           </div>
 
           {/* CTA */}
-          <div className="flex items-center gap-1 border-t border-border pt-4 text-[11px] font-bold uppercase tracking-widest text-primary transition-all duration-200 group-hover:gap-2">
+          <div className="flex items-center gap-1 border-t border-border pt-4 text-[11px] font-bold uppercase tracking-widest text-primary transition-all duration-200 group-hover:gap-2.5">
             View Mission
             <ChevronRight className="h-3.5 w-3.5" />
           </div>
@@ -153,7 +153,7 @@ export function MissionsGrid({ missions }: { missions: Mission[] }) {
       {paginated.length === 0 ? (
         <EmptySearch query={search} />
       ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {paginated.map((mission) => (
             <MissionCard key={mission.id} mission={mission} />
           ))}
@@ -162,38 +162,54 @@ export function MissionsGrid({ missions }: { missions: Mission[] }) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-9 w-9 rounded-lg"
+        <div className="flex items-center justify-center gap-1 pt-4">
+          {/* Prev */}
+          <button
             disabled={page === 1}
             onClick={() => setPage((p) => p - 1)}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
           >
             <ChevronLeft className="h-4 w-4" />
-          </Button>
+          </button>
 
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <Button
-              key={p}
-              variant={p === page ? "default" : "outline"}
-              size="icon"
-              className="h-9 w-9 rounded-lg"
-              onClick={() => setPage(p)}
-            >
-              {p}
-            </Button>
-          ))}
+          {/* Ellipsis logic */}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
+            const isActive = p === page
+            const isEdge = p === 1 || p === totalPages
+            const isNear = Math.abs(p - page) <= 1
+            if (!isEdge && !isNear) {
+              if (p === 2 || p === totalPages - 1) {
+                return (
+                  <span key={p} className="flex h-9 w-5 items-center justify-center text-sm text-muted-foreground">
+                    …
+                  </span>
+                )
+              }
+              return null
+            }
+            return (
+              <button
+                key={p}
+                onClick={() => setPage(p)}
+                className={`flex h-9 min-w-[36px] items-center justify-center rounded-lg border px-3 text-sm font-medium transition-colors ${
+                  isActive
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-card text-foreground hover:bg-muted"
+                }`}
+              >
+                {p}
+              </button>
+            )
+          })}
 
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-9 w-9 rounded-lg"
+          {/* Next */}
+          <button
             disabled={page === totalPages}
             onClick={() => setPage((p) => p + 1)}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
           >
             <ChevronRight className="h-4 w-4" />
-          </Button>
+          </button>
         </div>
       )}
     </div>

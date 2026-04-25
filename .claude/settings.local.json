@@ -3,7 +3,9 @@
     "allow": [
       "Read(//private/tmp/**)",
       "Bash(unzip -o \"/Users/lesterdannlopez/Downloads/AdventFlow-handoff.zip\" -d adventflow-handoff)",
-      "Bash(find \"/Users/lesterdannlopez/Desktop/Dann Folder/MyProjects/Work/nelm-sda-manage/src\" -type f \\\\\\( -name \"*.tsx\" -o -name \"*.ts\" \\\\\\) -exec grep -l \"motion\\\\|animate\\\\|transition\" {} \\\\;)"
+      "Bash(find \"/Users/lesterdannlopez/Desktop/Dann Folder/MyProjects/Work/nelm-sda-manage/src\" -type f \\\\\\( -name \"*.tsx\" -o -name \"*.ts\" \\\\\\) -exec grep -l \"motion\\\\|animate\\\\|transition\" {} \\\\;)",
+      "Bash(mkdir -p /tmp/adventflow-handoff-2)",
+      "Bash(unzip -o \"/Users/lesterdannlopez/Downloads/AdventFlow-handoff-2.zip\" -d /tmp/adventflow-handoff-2)"
     ]
   }
 }

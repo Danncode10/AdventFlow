@@ -104,79 +104,29 @@ export function DashboardShell({ overview, user, profile, roles, missions }: Das
       {/* 1. Hub (Overview) */}
       <TabsContent value="hub" className="space-y-10 animate-in fade-in duration-500">
 
-        {/* Top stat cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Personnel Status Card */}
-          <Card className="bg-card border border-border/60 shadow-xl rounded-[2.5rem] overflow-hidden group hover:border-primary/30 transition-all p-1">
-            <div className="p-8 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                  <User className="w-6 h-6" />
+        {/* 4 mission stat cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { label: "Mission Personnel", value: overview.members, icon: User, color: "text-blue-500", bg: "bg-blue-500/10", trend: "+12% this quarter" },
+            { label: "Strategic Areas", value: overview.areas, icon: MapPin, color: "text-amber-500", bg: "bg-amber-500/10", trend: "Active territories" },
+            { label: "Divisions", value: overview.divisions, icon: GitBranch, color: "text-emerald-500", bg: "bg-emerald-500/10", trend: "Verified districts" },
+            { label: "Local Churches", value: overview.churches, icon: ChurchIcon, color: "text-primary", bg: "bg-primary/10", trend: "Registered congregations" },
+          ].map((stat, i) => (
+            <Card key={i} className="bg-card border border-border/60 shadow-xl rounded-[2.5rem] overflow-hidden group hover:border-primary/30 transition-all">
+              <CardContent className="p-8 space-y-6">
+                <div className={`w-12 h-12 rounded-2xl ${stat.bg} flex items-center justify-center ${stat.color} group-hover:scale-110 transition-transform`}>
+                  <stat.icon className="w-6 h-6" />
                 </div>
-                <Badge className="bg-primary/5 text-primary border-primary/10 font-black uppercase text-[9px] px-3">Personnel Profile</Badge>
-              </div>
-              <div>
-                <h3 className="text-xl font-black uppercase tracking-tight italic">
-                  {profile ? `${profile.first_name} ${profile.last_name}` : 'Personnel'}
-                </h3>
-                <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-60">
-                  {profile?.approved_roles?.[0] || 'Member'}
-                </p>
-              </div>
-              <button
-                onClick={() => setActiveTab("settings")}
-                className="pt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary hover:gap-3 transition-all"
-              >
-                View Credentials <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </Card>
-
-          {/* Local Church Placement */}
-          <Card className="bg-card border border-border/60 shadow-xl rounded-[2.5rem] overflow-hidden group hover:border-primary/30 transition-all p-1">
-            <div className="p-8 space-y-4 text-left">
-              <div className="flex items-center justify-between">
-                <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                  <ChurchIcon className="w-6 h-6" />
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
+                  <h4 className="text-4xl font-black tracking-tight text-foreground">{stat.value}</h4>
+                  <p className="text-[10px] font-medium text-muted-foreground mt-2 flex items-center gap-1">
+                    <TrendingUp className="w-3 h-3" /> {stat.trend}
+                  </p>
                 </div>
-                <Badge className="bg-primary/5 text-primary border-primary/10 font-black uppercase text-[9px] px-3">Ecclesiastical Placement</Badge>
-              </div>
-              <div>
-                <h3 className="text-xl font-black uppercase tracking-tight italic">
-                  {profile?.entity_name || 'Unassigned Structure'}
-                </h3>
-                <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-60">Ecclesiastical Location</p>
-              </div>
-              <button
-                onClick={() => setActiveTab("personnel")}
-                className="pt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary hover:gap-3 transition-all"
-              >
-                Church Directory <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </Card>
-
-          {/* Sanctuary Status */}
-          <Card className="bg-card border border-border/60 shadow-xl rounded-[2.5rem] overflow-hidden group hover:border-primary/30 transition-all p-1">
-            <div className="p-8 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="w-12 h-12 bg-primary/50 rounded-2xl flex items-center justify-center text-primary-foreground group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
-                  <Sparkles className="w-6 h-6" />
-                </div>
-                <Badge className="bg-primary/5 text-primary border-primary/10 font-black uppercase text-[9px] px-3">System Integrity</Badge>
-              </div>
-              <div>
-                <h3 className="text-xl font-black uppercase tracking-tight italic">Active Pulse</h3>
-                <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-60">Session Fully Authenticated</p>
-              </div>
-              <button
-                onClick={() => setActiveTab("security")}
-                className="pt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary hover:gap-3 transition-all"
-              >
-                Security Audit <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </Card>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Action Banner / Status Alert */}
@@ -402,19 +352,15 @@ export function DashboardShell({ overview, user, profile, roles, missions }: Das
       {/* 6. Security */}
       <TabsContent value="security" className="animate-in slide-in-from-bottom-2 duration-500">
         <div className="flex justify-center w-full py-6 md:py-12">
-          <Card className="bg-card text-card-foreground border border-border/60 p-10 md:p-16 max-w-3xl w-full shadow-2xl rounded-[3rem] relative overflow-hidden backdrop-blur-xl">
-             <SecurityForm />
+          <Card className="bg-card text-card-foreground border border-border/60 p-10 md:p-16 max-w-lg w-full shadow-2xl rounded-[3rem] relative overflow-hidden backdrop-blur-xl">
+            <SecurityForm />
           </Card>
         </div>
       </TabsContent>
 
       {/* 7. Profile Settings */}
-      <TabsContent value="settings" className="animate-in slide-in-from-bottom-2 duration-500">
-        <div className="flex justify-center w-full py-6 md:py-12">
-          <Card className="bg-card text-card-foreground border border-border/60 p-10 md:p-16 max-w-3xl w-full shadow-2xl rounded-[3rem] relative overflow-hidden backdrop-blur-xl">
-            <ProfileForm profile={profile} />
-          </Card>
-        </div>
+      <TabsContent value="settings" className="animate-in slide-in-from-bottom-2 duration-500 py-6 md:py-12">
+        <ProfileForm profile={profile} />
       </TabsContent>
     </Tabs>
   )
