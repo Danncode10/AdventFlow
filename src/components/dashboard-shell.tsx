@@ -69,6 +69,7 @@ const QUICK_ACTIONS = [
   { icon: BookOpen, label: "Resources", desc: "28 Fundamental Beliefs", color: "text-amber-500", bg: "bg-amber-500/10", href: "#" },
   { icon: Users2, label: "Personnel", desc: "Manage members", color: "text-purple-500", bg: "bg-purple-500/10", href: "#" },
   { icon: Bell, label: "Approvals", desc: "Pending requests", color: "text-primary", bg: "bg-primary/10", href: "#" },
+  { icon: FileText, label: "Clerk Office", desc: "Member registry", color: "text-teal-500", bg: "bg-teal-500/10", href: "/dashboard/clerk", roleRequired: "Church Clerk" },
 ]
 
 export function DashboardShell({ overview, user, profile, roles, missions }: DashboardShellProps) {
@@ -191,7 +192,9 @@ export function DashboardShell({ overview, user, profile, roles, missions }: Das
             <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Sanctuary Suite</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {QUICK_ACTIONS.map((action) => (
+            {QUICK_ACTIONS.filter(action =>
+              !action.roleRequired || profile?.approved_roles?.includes(action.roleRequired)
+            ).map((action) => (
               <Link
                 key={action.label}
                 href={action.href}
