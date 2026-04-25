@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Menu, X, LayoutDashboard, Settings, LogOut, ChevronDown } from "lucide-react";
 import { signOut } from "@/services/auth";
 import { useRouter } from "next/navigation";
@@ -42,7 +43,7 @@ export function Navbar({ user }: { user: any }) {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-8">
 
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2.5 no-underline">
+        <Link href="/" className="flex items-center gap-2.5 no-underline">
           <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white p-[3px] shadow-sm">
             <Image src="/logo-sda.png" alt="SDA Logo" width={30} height={30} className="object-contain" />
           </div>
@@ -52,18 +53,18 @@ export function Navbar({ user }: { user: any }) {
               For Your Church
             </span>
           </div>
-        </a>
+        </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className="block px-3.5 py-1.5 text-[13px] font-medium text-muted-foreground rounded-lg hover:text-primary hover:bg-primary/10 transition-all duration-150 no-underline"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -124,18 +125,18 @@ export function Navbar({ user }: { user: any }) {
             </DropdownMenu>
           ) : (
             <>
-              <a
+              <Link
                 href="/login"
                 className="px-[18px] py-2 text-[13px] font-semibold text-muted-foreground hover:text-foreground transition-colors no-underline"
               >
                 Sign in
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/signup"
                 className="rounded-[10px] bg-primary px-[22px] py-[9px] text-[13px] font-semibold text-white shadow-[0_1px_3px_rgba(30,58,138,0.3),0_4px_12px_rgba(30,58,138,0.2)] hover:bg-primary/90 hover:-translate-y-px transition-all no-underline"
               >
                 Get access
-              </a>
+              </Link>
             </>
           )}
         </div>
@@ -160,14 +161,14 @@ export function Navbar({ user }: { user: any }) {
           >
             <nav className="flex flex-col gap-2">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center justify-between rounded-2xl bg-muted/30 p-4 text-xs font-semibold uppercase tracking-widest text-foreground no-underline active:scale-[0.98] transition-all"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </nav>
             <div className="mt-6 space-y-3">
@@ -202,12 +203,12 @@ export function Navbar({ user }: { user: any }) {
                   </div>
                 </div>
               ) : (
-                <a
+                <Link
                   href="/signup"
                   className="flex w-full items-center justify-center rounded-3xl bg-primary p-5 text-[11px] font-bold uppercase tracking-widest text-white shadow-2xl shadow-primary/20 no-underline"
                 >
                   Get Access
-                </a>
+                </Link>
               )}
             </div>
           </motion.div>

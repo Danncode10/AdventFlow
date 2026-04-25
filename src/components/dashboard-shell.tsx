@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import {
   Sparkles,
   User,
@@ -191,7 +192,7 @@ export function DashboardShell({ overview, user, profile, roles, missions }: Das
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {QUICK_ACTIONS.map((action) => (
-              <a
+              <Link
                 key={action.label}
                 href={action.href}
                 className="group flex flex-col items-center gap-3 p-6 rounded-[2rem] bg-card border border-border/50 hover:border-primary/20 hover:bg-card shadow-sm hover:shadow-lg transition-all text-center"
@@ -203,7 +204,7 @@ export function DashboardShell({ overview, user, profile, roles, missions }: Das
                   <p className="text-[11px] font-black uppercase tracking-wide text-foreground leading-tight">{action.label}</p>
                   <p className="text-[9px] font-medium text-muted-foreground mt-0.5 leading-tight">{action.desc}</p>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -269,7 +270,7 @@ export function DashboardShell({ overview, user, profile, roles, missions }: Das
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {missions.map((mission) => (
-              <a
+              <Link
                 key={mission.id}
                 href={`/missions/${mission.slug}`}
                 className="group block"
@@ -304,7 +305,7 @@ export function DashboardShell({ overview, user, profile, roles, missions }: Das
                     </div>
                   </div>
                 </Card>
-              </a>
+              </Link>
             ))}
           </div>
         )}

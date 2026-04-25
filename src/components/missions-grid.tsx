@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -19,7 +20,7 @@ const ITEMS_PER_PAGE = 6
 
 function MissionCard({ mission }: { mission: Mission }) {
   return (
-    <a href={`/missions/${mission.slug}`} className="group block h-full">
+    <Link href={`/missions/${mission.slug}`} className="group block h-full">
       <Card className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-xl">
         {/* Animated gradient top border */}
         <div className="absolute inset-x-0 top-0 h-[3px] rounded-t-2xl bg-gradient-to-r from-primary to-primary/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -70,7 +71,7 @@ function MissionCard({ mission }: { mission: Mission }) {
           </div>
         </CardContent>
       </Card>
-    </a>
+    </Link>
   )
 }
 
