@@ -73,24 +73,6 @@ export default async function Home() {
               See how it works
             </a>
           </div>
-
-          {/* Stats row */}
-          <div className="mt-16 flex overflow-hidden rounded-[22px] border border-white/[0.12] bg-white/[0.06] backdrop-blur-md">
-            {[
-              { num: "1", label: "Platform for All" },
-              { num: "28", label: "Fundamental Beliefs" },
-              { num: "Free", label: "For Every Congregation" },
-              { num: "☽", label: "Every Sabbath, Ready" },
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className="flex-1 border-r border-white/[0.1] px-8 py-7 text-center last:border-r-0"
-              >
-                <span className="block font-serif text-4xl text-hero-gold mb-1">{stat.num}</span>
-                <span className="text-[12px] font-medium uppercase tracking-[0.08em] text-white/50">{stat.label}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
