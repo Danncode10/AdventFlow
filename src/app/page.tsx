@@ -1,6 +1,7 @@
 import { getUserProfile } from "@/services/dashboard";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { AnimateOnScroll, StaggerOnScroll, StaggerItem } from "@/components/animate-on-scroll";
 
 async function getDailyVerse() {
   try {
@@ -40,39 +41,47 @@ export default async function Home() {
 
         <div className="relative z-10 mx-auto max-w-7xl px-8 text-center">
           {/* Eyebrow */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.08] px-4 py-1.5 backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-hero-gold animate-pulse" />
-            <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/85">
-              For Seventh-day Adventist Members &amp; Leaders
-            </span>
-          </div>
+          <AnimateOnScroll variant="fade-up" delay={0}>
+            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.08] px-4 py-1.5 backdrop-blur-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-hero-gold animate-pulse" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/85">
+                For Seventh-day Adventist Members &amp; Leaders
+              </span>
+            </div>
+          </AnimateOnScroll>
 
           {/* Heading */}
-          <h1 className="mx-auto mb-6 max-w-[780px] font-serif text-[clamp(48px,7vw,80px)] leading-[1.05] tracking-[-1.5px] text-white" style={{ textShadow: "0 2px 24px rgba(6,13,31,0.6)" }}>
-            Your church, <em className="not-italic text-hero-gold">connected and organized</em>
-          </h1>
+          <AnimateOnScroll variant="fade-up" delay={0.1}>
+            <h1 className="mx-auto mb-6 max-w-[780px] font-serif text-[clamp(48px,7vw,80px)] leading-[1.05] tracking-[-1.5px] text-white" style={{ textShadow: "0 2px 24px rgba(6,13,31,0.6)" }}>
+              Your church, <em className="not-italic text-hero-gold">connected and organized</em>
+            </h1>
+          </AnimateOnScroll>
 
           {/* Description */}
-          <p className="mx-auto mb-12 max-w-[520px] text-[17px] leading-[1.7] text-white/70">
-            AdventFlow is the online home for your Adventist congregation — where members stay informed, leaders coordinate, and the whole mission moves forward together.
-          </p>
+          <AnimateOnScroll variant="fade-up" delay={0.2}>
+            <p className="mx-auto mb-12 max-w-[520px] text-[17px] leading-[1.7] text-white/70">
+              AdventFlow is the online home for your Adventist congregation — where members stay informed, leaders coordinate, and the whole mission moves forward together.
+            </p>
+          </AnimateOnScroll>
 
           {/* CTAs */}
-          <div className="flex flex-wrap items-center justify-center gap-3.5">
-            <a
-              href={user ? "/dashboard" : "/signup"}
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-[14px] font-semibold text-white no-underline shadow-[0_2px_8px_rgba(30,58,138,0.3),0_12px_32px_rgba(30,58,138,0.2)] transition-all hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-[0_4px_12px_rgba(30,58,138,0.35),0_16px_40px_rgba(30,58,138,0.25)]"
-            >
-              Join your congregation
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </a>
-            <a
-              href="#how-it-works"
-              className="inline-flex items-center gap-2 rounded-xl border border-border bg-white px-7 py-3.5 text-[14px] font-medium text-foreground no-underline transition-all hover:bg-card hover:border-border/80"
-            >
-              See how it works
-            </a>
-          </div>
+          <AnimateOnScroll variant="fade-up" delay={0.3}>
+            <div className="flex flex-wrap items-center justify-center gap-3.5">
+              <a
+                href={user ? "/dashboard" : "/signup"}
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-[14px] font-semibold text-white no-underline shadow-[0_2px_8px_rgba(30,58,138,0.3),0_12px_32px_rgba(30,58,138,0.2)] transition-all hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-[0_4px_12px_rgba(30,58,138,0.35),0_16px_40px_rgba(30,58,138,0.25)]"
+              >
+                Join your congregation
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+              </a>
+              <a
+                href="#how-it-works"
+                className="inline-flex items-center gap-2 rounded-xl border border-border bg-white px-7 py-3.5 text-[14px] font-medium text-foreground no-underline transition-all hover:bg-card hover:border-border/80"
+              >
+                See how it works
+              </a>
+            </div>
+          </AnimateOnScroll>
         </div>
       </section>
 
@@ -82,6 +91,7 @@ export default async function Home() {
           <div className="grid grid-cols-1 items-center gap-20 lg:grid-cols-2">
 
             {/* Left: text */}
+            <AnimateOnScroll variant="slide-left" duration={0.7}>
             <div>
               <div className="mb-3.5 text-[11px] font-bold uppercase tracking-[0.15em] text-primary">
                 How AdventFlow Works
@@ -95,7 +105,7 @@ export default async function Home() {
                 The Adventist Church is organized in levels — your local congregation is part of a District, which belongs to a Mission. AdventFlow connects all these levels so everyone stays on the same page.
               </p>
 
-              <div className="mt-9 flex flex-col gap-6">
+              <StaggerOnScroll className="mt-9 flex flex-col gap-6" delay={0.2}>
                 {[
                   {
                     bg: "bg-primary/[0.07]",
@@ -119,22 +129,26 @@ export default async function Home() {
                     desc: "Mission administrators can see financial summaries and church activities across all congregations — without sifting through paperwork.",
                   },
                 ].map((item, idx) => (
-                  <div key={idx} className="flex gap-3.5">
-                    <div className={`flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[10px] ${item.bg}`}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={item.stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d={item.path} />
-                      </svg>
+                  <StaggerItem key={idx}>
+                    <div className="flex gap-3.5">
+                      <div className={`flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[10px] ${item.bg}`}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={item.stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d={item.path} />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="mb-0.5 text-[14px] font-semibold text-foreground">{item.title}</div>
+                        <div className="text-[13px] leading-[1.6] text-muted-foreground">{item.desc}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="mb-0.5 text-[14px] font-semibold text-foreground">{item.title}</div>
-                      <div className="text-[13px] leading-[1.6] text-muted-foreground">{item.desc}</div>
-                    </div>
-                  </div>
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerOnScroll>
             </div>
+            </AnimateOnScroll>
 
             {/* Right: hierarchy visual */}
+            <AnimateOnScroll variant="slide-right" duration={0.7}>
             <div className="relative rounded-[32px] border border-border bg-gradient-to-br from-[#f8faff] to-[#eef3fb] p-10">
               <div className="absolute inset-0 rounded-[32px] pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 40% at 50% 100%, rgba(30,58,138,0.06), transparent)" }} />
               <div className="mb-2 text-center text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
@@ -176,6 +190,7 @@ export default async function Home() {
                 <span className="text-[12px] font-medium text-muted-foreground">Every level stays updated in real time</span>
               </div>
             </div>
+            </AnimateOnScroll>
           </div>
         </div>
       </section>
@@ -183,7 +198,7 @@ export default async function Home() {
       {/* ── TOOLS / FEATURES ── */}
       <section id="tools" className="bg-background py-[100px]">
         <div className="mx-auto max-w-7xl px-8">
-          <div className="mb-[60px] text-center">
+          <AnimateOnScroll variant="fade-up" className="mb-[60px] text-center">
             <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-primary">What You Can Do</div>
             <div className="mx-auto mt-3.5 mb-3.5 h-[3px] w-12 rounded-full bg-gradient-to-r from-gold to-gold-light" />
             <h2 className="font-serif text-[clamp(32px,4vw,48px)] leading-[1.1] tracking-[-0.5px] text-foreground">
@@ -192,9 +207,9 @@ export default async function Home() {
             <p className="mx-auto mt-4 max-w-[460px] text-[16px] leading-[1.7] text-muted-foreground">
               Whether you are a regular member, a church elder, a pastor, or a mission administrator — AdventFlow has something for you.
             </p>
-          </div>
+          </AnimateOnScroll>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <StaggerOnScroll className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {[
               {
                 bg: "bg-red-500/[0.07]",
@@ -246,34 +261,35 @@ export default async function Home() {
                 accent: true,
               },
             ].map((card, idx) => (
-              <div
-                key={idx}
-                className={`group rounded-[22px] border p-8 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(30,58,138,0.08)] ${
-                  card.accent
-                    ? "border-primary/15 bg-gradient-to-br from-primary/[0.03] to-primary/[0.06]"
-                    : "border-border bg-card hover:border-primary/20"
-                }`}
-              >
-                <div className={`mb-6 flex h-[50px] w-[50px] items-center justify-center rounded-[14px] ${card.bg}`}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={card.stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d={card.path} />
-                  </svg>
+              <StaggerItem key={idx}>
+                <div
+                  className={`group h-full rounded-[22px] border p-8 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(30,58,138,0.08)] ${
+                    card.accent
+                      ? "border-primary/15 bg-gradient-to-br from-primary/[0.03] to-primary/[0.06]"
+                      : "border-border bg-card hover:border-primary/20"
+                  }`}
+                >
+                  <div className={`mb-6 flex h-[50px] w-[50px] items-center justify-center rounded-[14px] ${card.bg}`}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={card.stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d={card.path} />
+                    </svg>
+                  </div>
+                  <div className="mb-2.5 font-serif text-[20px] tracking-[-0.2px] text-foreground">{card.title}</div>
+                  <div className="text-[14px] leading-[1.7] text-muted-foreground">{card.desc}</div>
+                  <span className="mt-5 inline-block text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/70">
+                    {card.tag}
+                  </span>
                 </div>
-                <div className="mb-2.5 font-serif text-[20px] tracking-[-0.2px] text-foreground">{card.title}</div>
-                <div className="text-[14px] leading-[1.7] text-muted-foreground">{card.desc}</div>
-                <span className="mt-5 inline-block text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/70">
-                  {card.tag}
-                </span>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerOnScroll>
         </div>
       </section>
 
       {/* ── WHO IS IT FOR ── */}
       <section id="who" className="border-t border-border bg-card py-[100px]">
         <div className="mx-auto max-w-7xl px-8">
-          <div className="mx-auto mb-[52px] max-w-[560px] text-center">
+          <AnimateOnScroll variant="fade-up" className="mx-auto mb-[52px] max-w-[560px] text-center">
             <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-primary">Who Is AdventFlow For?</div>
             <div className="mx-auto mt-3.5 mb-3.5 h-[3px] w-12 rounded-full bg-gradient-to-r from-gold to-gold-light" />
             <h2 className="font-serif text-[clamp(32px,4vw,48px)] leading-[1.1] tracking-[-0.5px] text-foreground">
@@ -282,9 +298,9 @@ export default async function Home() {
             <p className="mx-auto mt-4 text-[16px] leading-[1.7] text-muted-foreground">
               Whether you sit in the pew or lead the congregation — AdventFlow has a role for you.
             </p>
-          </div>
+          </AnimateOnScroll>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <StaggerOnScroll className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {[
               {
                 status: "done",
@@ -323,32 +339,33 @@ export default async function Home() {
                 desc: "Get a bird's-eye view of all churches in your mission territory — financial health, membership growth, and upcoming events — in one place.",
               },
             ].map((card, idx) => (
-              <div
-                key={idx}
-                className={`relative overflow-hidden rounded-[22px] border p-7 transition-all hover:shadow-[0_4px_20px_rgba(30,58,138,0.07)] ${
-                  card.status === "active"
-                    ? "border-primary/30 bg-gradient-to-br from-primary/[0.02] to-transparent"
-                    : "border-border bg-card hover:border-primary/20"
-                }`}
-              >
-                {/* Status dot */}
-                <span
-                  className={`absolute right-5 top-5 h-2 w-2 rounded-full ${
-                    card.status === "done"
-                      ? "bg-green-500"
-                      : card.status === "active"
-                      ? "bg-primary animate-pulse"
-                      : "bg-border"
+              <StaggerItem key={idx}>
+                <div
+                  className={`relative h-full overflow-hidden rounded-[22px] border p-7 transition-all hover:shadow-[0_4px_20px_rgba(30,58,138,0.07)] ${
+                    card.status === "active"
+                      ? "border-primary/30 bg-gradient-to-br from-primary/[0.02] to-transparent"
+                      : "border-border bg-card hover:border-primary/20"
                   }`}
-                />
-                <div className={`mb-2 text-[11px] font-bold uppercase tracking-[0.15em] ${card.status === "active" ? "text-primary" : "text-muted-foreground/60"}`}>
-                  {card.forLabel}
+                >
+                  {/* Status dot */}
+                  <span
+                    className={`absolute right-5 top-5 h-2 w-2 rounded-full ${
+                      card.status === "done"
+                        ? "bg-green-500"
+                        : card.status === "active"
+                        ? "bg-primary animate-pulse"
+                        : "bg-border"
+                    }`}
+                  />
+                  <div className={`mb-2 text-[11px] font-bold uppercase tracking-[0.15em] ${card.status === "active" ? "text-primary" : "text-muted-foreground/60"}`}>
+                    {card.forLabel}
+                  </div>
+                  <div className="mb-2 text-[15px] font-semibold text-foreground">{card.title}</div>
+                  <div className="text-[13px] leading-[1.6] text-muted-foreground">{card.desc}</div>
                 </div>
-                <div className="mb-2 text-[15px] font-semibold text-foreground">{card.title}</div>
-                <div className="text-[13px] leading-[1.6] text-muted-foreground">{card.desc}</div>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerOnScroll>
         </div>
       </section>
 
@@ -356,7 +373,7 @@ export default async function Home() {
       <section className="relative overflow-hidden bg-primary py-[100px]">
         <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(ellipse 70% 80% at 80% 50%, rgba(255,255,255,0.05), transparent)" }} />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/15" />
-        <div className="relative mx-auto max-w-[640px] px-8 text-center">
+        <AnimateOnScroll variant="scale-up" duration={0.65} className="relative mx-auto max-w-[640px] px-8 text-center">
           <div className="mb-5 text-[11px] font-bold uppercase tracking-[0.15em] text-white/55">
             Free for every congregation
           </div>
@@ -381,7 +398,7 @@ export default async function Home() {
               Already a member? Sign in
             </a>
           </div>
-        </div>
+        </AnimateOnScroll>
       </section>
 
       <Footer />
