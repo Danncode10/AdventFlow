@@ -30,38 +30,64 @@ export async function getMissionBySlug(slug: string) {
   return data;
 }
 
-export async function getAreasByMission(missionId: string) {
+export async function getAreasWithDivisions(missionId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('areas')
-    .select('id, name')
+    .select('id, name, divisions(id, name)')
     .eq('mission_id', missionId)
     .order('name');
   if (error) throw error;
-  return data;
+  return data ?? [];
 }
 
-export async function getDivisionsByArea(areaId: string) {
+export async function getDivisionsWithChurches(missionId: string) {
   const supabase = await createClient();
+  // Get all areas first, then get divisions with churches
+  const { data: areas, error: areaErr } = await supabase
+    .from('areas')
+    .select('id')
+    .eq('mission_id', missionId);
+  if (areaErr) throw areaErr;
+  const areaIds = (areas ?? []).map((a: { id: string }) => a.id);
+  if (areaIds.length === 0) return [];
+
   const { data, error } = await supabase
     .from('divisions')
-    .select('id, name')
-    .eq('area_id', areaId)
+    .select('id, name, area_id, churches(id, name)')
+    .in('area_id', areaIds)
     .order('name');
   if (error) throw error;
-  return data;
+  return data ?? [];
 }
 
-export async function getChurchesByDivision(divisionId: string) {
+export async function getChurchesByMission(missionId: string) {
   const supabase = await createClient();
+  const { data: areas, error: areaErr } = await supabase
+    .from('areas')
+    .select('id')
+    .eq('mission_id', missionId);
+  if (areaErr) throw areaErr;
+  const areaIds = (areas ?? []).map((a: { id: string }) => a.id);
+  if (areaIds.length === 0) return [];
+
+  const { data: divisions, error: divErr } = await supabase
+    .from('divisions')
+    .select('id')
+    .in('area_id', areaIds);
+  if (divErr) throw divErr;
+  const divIds = (divisions ?? []).map((d: { id: string }) => d.id);
+  if (divIds.length === 0) return [];
+
   const { data, error } = await supabase
     .from('churches')
-    .select('id, name')
-    .eq('division_id', divisionId)
+    .select('id, name, division_id')
+    .in('division_id', divIds)
     .order('name');
   if (error) throw error;
-  return data;
+  return data ?? [];
 }
+
 
 export async function submitOnboardingRequest(params: {
   mission_id?: string;
