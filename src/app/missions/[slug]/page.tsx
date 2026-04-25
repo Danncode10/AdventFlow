@@ -329,16 +329,9 @@ export default async function MissionPage({ params }: MissionPageProps) {
                             </div>
                             <h3 className="text-lg font-black uppercase tracking-tight text-foreground mb-1">{div.name}</h3>
                             <p className="text-xs text-muted-foreground mb-3">District division</p>
-                            {div.churches && div.churches.length > 0 && (
-                              <div className="flex flex-col gap-1.5">
-                                {div.churches.map((ch: any) => (
-                                  <div key={ch.id} className="flex items-center gap-2 text-xs text-muted-foreground">
-                                    <ChurchIcon className="w-3 h-3 text-primary/50 shrink-0" />
-                                    {ch.name}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
+                            <Button variant="outline" size="sm" className="w-full mt-2 text-xs font-semibold border-blue-500/30 text-blue-600 hover:bg-blue-500/10">
+                              See more info
+                            </Button>
                           </CardContent>
                         </Card>
                       </StaggerItem>
