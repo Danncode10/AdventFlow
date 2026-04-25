@@ -108,3 +108,4 @@ The system operates on a 4-tier recursive parent-child model defined in `src/lib
 - **Data Privacy**: Mandatory consent for ecclesiastical record-keeping in compliance with the Philippine Data Privacy Act.
 - **External Storage**: Legal responsibility for file content is offloaded to the user's Google Drive via link-sharing.
 <!-- END:nextjs-agent-rules -->
+\

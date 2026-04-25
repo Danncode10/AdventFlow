@@ -1,34 +1,47 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @theme {
-  /* AdventFlow "Sanctuary" Palette */
-  --color-primary: #1e3a8a; 
-  --color-primary-foreground: #f8fafc;
+  /* Fonts */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+
+  /* AdventFlow Brand Palette */
+  --color-primary: #1e3a8a;
+  --color-primary-foreground: #F0F7FF;
+
+  /* Gold accent */
+  --color-gold: #b08c3a;
+  --color-gold-light: #e8c96a;
+  --color-hero-gold: #f0c070;
+
+  /* Dark surface (footer) */
+  --color-surface-dark: #0c1527;
 
   /* Use a subtle tint for the background to avoid "flat" white */
-  --color-background: #fdfdfe; 
-  --color-foreground: #020617;
+  --color-background: #F5F8FC;
+  --color-foreground: #0D1F33;
 
   /* Premium Card & Popover semantics */
-  --color-card: #ffffff;
-  --color-card-foreground: #020617;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #0D1F33;
   --color-popover: #ffffff;
   --color-popover-foreground: #020617;
 
   /* Refined secondary and muted tones */
-  --color-secondary: #f1f5f9;
-  --color-secondary-foreground: #0f172a;
+  --color-secondary: #C8A84B;
+  --color-secondary-foreground: #1A2A0D;
   
-  --color-muted: #f8fafc;
-  --color-muted-foreground: #64748b;
+  --color-muted: #E8EEF5;
+  --color-muted-foreground: #5A7A99;
   
-  --color-accent: #eff6ff;
-  --color-accent-foreground: #1e3a8a;
+  --color-accent: #2E7D5E;
+  --color-accent-foreground: #F0FFF8;
   
   --color-destructive: #ef4444;
   --color-destructive-foreground: #f8fafc;
 
-  --color-border: #e2e8f0;
+  --color-border: #D0DDE8;
   --color-input: #e2e8f0;
   --color-ring: #1e40af;
 

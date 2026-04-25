@@ -1,213 +1,402 @@
-import { ArrowRight, ShieldCheck, Heart, Users, Calendar, Banknote, Sparkles, Star, Check } from "lucide-react";
 import { getUserProfile } from "@/services/dashboard";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { siteConfig } from "@/lib/config";
+
+async function getDailyVerse() {
+  try {
+    const res = await fetch("https://bible-api.com/john+3:16", { next: { revalidate: 86400 } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return { text: data.text?.trim(), reference: data.reference };
+  } catch {
+    return null;
+  }
+}
 
 export default async function Home() {
-  const session = await getUserProfile();
+  const [session] = await Promise.all([getUserProfile()]);
   const user = session?.user;
 
   return (
     <>
       <Navbar user={user} />
 
-      {/* =============================
-          HERO SECTION: THE SANCTUARY
-          ============================= */}
-      <section id="home" className="relative overflow-hidden bg-background">
-        {/* Divine Light Gradients */}
-        <div className="pointer-events-none absolute -top-40 -right-40 h-[800px] w-[800px] rounded-full bg-primary/5 blur-[140px] -z-10" />
-        <div className="pointer-events-none absolute -bottom-40 -left-40 h-[600px] w-[600px] rounded-full bg-accent/5 blur-[120px] -z-10" />
+      {/* ── HERO ── */}
+      <section id="home" className="relative overflow-hidden" style={{ padding: "120px 0 90px" }}>
+        {/* Background photo */}
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: "url('/hero-bg.jpg')",
+              backgroundPosition: "center 35%",
+              filter: "brightness(0.55) saturate(0.9)",
+            }}
+          />
+          {/* Gradient overlays */}
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(12,26,64,0.5) 0%, rgba(12,26,64,0.3) 40%, rgba(250,250,248,0.95) 100%)" }} />
+          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 30%, rgba(30,58,138,0.2) 0%, transparent 70%)" }} />
+        </div>
 
-        <div className="relative mx-auto max-w-7xl px-6 sm:px-10 py-32 md:py-48 text-center">
-          {/* Sanctuary Badge */}
-          <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 group cursor-default">
-            <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">
-              The Mission Hub v4.0
+        <div className="relative z-10 mx-auto max-w-7xl px-8 text-center">
+          {/* Eyebrow */}
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.08] px-4 py-1.5 backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-hero-gold animate-pulse" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/85">
+              For Seventh-day Adventist Members &amp; Leaders
             </span>
           </div>
 
-          <h1 className="mx-auto max-w-5xl text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter text-foreground leading-[0.9] uppercase italic">
-            Empowering the{" "}
-            <span className="bg-gradient-to-r from-primary via-blue-400 to-accent bg-clip-text text-transparent italic">
-              Mission
-            </span>
+          {/* Heading */}
+          <h1 className="mx-auto mb-6 max-w-[780px] font-serif text-[clamp(48px,7vw,80px)] leading-[1.05] tracking-[-1.5px] text-white" style={{ textShadow: "0 2px 24px rgba(6,13,31,0.6)" }}>
+            Your church, <em className="not-italic text-hero-gold">connected and organized</em>
           </h1>
 
-          <p className="mx-auto mt-10 max-w-2xl text-lg text-muted-foreground font-medium leading-relaxed opacity-80">
-            AdventFlow is the premier ecclesiastical operating system for the Seventh-day Adventist Church. 
-            A unified sanctuary for personnel, treasury, and mission-wide coordination.
+          {/* Description */}
+          <p className="mx-auto mb-12 max-w-[520px] text-[17px] leading-[1.7] text-white/70">
+            AdventFlow is the online home for your Adventist congregation — where members stay informed, leaders coordinate, and the whole mission moves forward together.
           </p>
 
-          {/* Sanctuary Portal CTAs */}
-          <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-6">
+          {/* CTAs */}
+          <div className="flex flex-wrap items-center justify-center gap-3.5">
             <a
               href={user ? "/dashboard" : "/signup"}
-              className="group relative overflow-hidden px-10 py-4 text-xs font-black uppercase tracking-widest rounded-2xl bg-primary text-primary-foreground shadow-2xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-[14px] font-semibold text-white no-underline shadow-[0_2px_8px_rgba(30,58,138,0.3),0_12px_32px_rgba(30,58,138,0.2)] transition-all hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-[0_4px_12px_rgba(30,58,138,0.35),0_16px_40px_rgba(30,58,138,0.25)]"
             >
-              <span className="relative z-10 flex items-center gap-3">
-                Enter Sanctuary Portal
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              Join your congregation
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>
-
             <a
-              href="/#mission"
-              className="px-10 py-4 text-xs font-black uppercase tracking-widest rounded-2xl border border-border bg-card/50 backdrop-blur-sm text-foreground hover:bg-secondary transition-all flex items-center gap-3 active:scale-95"
+              href="#how-it-works"
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-white px-7 py-3.5 text-[14px] font-medium text-foreground no-underline transition-all hover:bg-card hover:border-border/80"
             >
-              Learn the Architecture
+              See how it works
             </a>
           </div>
 
-          {/* Trusted Badge */}
-          <div className="mt-20 flex flex-col items-center gap-4 opacity-40">
-            <p className="text-[9px] font-black uppercase tracking-[0.4em]">Integrated Hierarchies</p>
-            <div className="flex gap-8 items-center grayscale opacity-60">
-               <span className="font-black italic tracking-tighter text-lg text-foreground">MISSION</span>
-               <span className="font-black italic tracking-tighter text-lg text-foreground">AREA</span>
-               <span className="font-black italic tracking-tighter text-lg text-foreground">DIVISION</span>
-               <span className="font-black italic tracking-tighter text-lg text-foreground">CHURCH</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =============================
-          THE MISSION TREE (Hierarchical Excellence)
-          ============================= */}
-      <section id="mission" className="bg-card border-y border-border isolate">
-        <div className="mx-auto max-w-7xl px-6 sm:px-10 py-32">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Hierarchical Scoping</span>
-              <h2 className="mt-6 text-4xl sm:text-5xl font-black text-foreground tracking-tighter leading-[0.9] uppercase italic">
-                A Unified <br/> <span className="text-primary italic">Chain of Command</span>
-              </h2>
-              <p className="mt-8 text-muted-foreground text-lg font-medium leading-relaxed">
-                AdventFlow mirrors the Adventist organizational structure perfectly. From the local Church member 
-                to District Pastors and Mission Administrators, every layer is scoped, secured, and synchronized.
-              </p>
-              
-              <div className="mt-12 space-y-6">
-                {[
-                  { icon: ShieldCheck, title: "RLS-Hardened Security", desc: "Every record is scoped to the user's specific organization level." },
-                  { icon: Users, title: "Tiered Approvals", desc: "Verification flow follows the ecclesiastical chain of command." },
-                  { icon: Sparkles, title: "AI-Driven Insights", desc: "Intelligent analytics for mission-wide progress tracking." }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex gap-4">
-                    <div className="mt-1 h-6 w-6 text-primary shrink-0"><item.icon size={20} strokeWidth={3} /></div>
-                    <div>
-                      <h4 className="text-sm font-black uppercase tracking-tight text-foreground">{item.title}</h4>
-                      <p className="text-sm text-muted-foreground font-medium">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Visual Representation of the Mission Tree */}
-            <div className="relative group">
-              <div className="absolute -inset-4 bg-primary/5 rounded-[3rem] blur-2xl group-hover:bg-primary/10 transition-colors" />
-              <div className="relative aspect-square rounded-[3rem] border border-border/60 bg-gradient-to-br from-card to-background p-10 flex flex-col justify-center gap-6 shadow-2xl">
-                {[
-                  { label: "MISSION", level: "01", color: "from-primary to-blue-600", width: "w-full" },
-                  { label: "AREA", level: "02", color: "from-blue-500 to-cyan-500", width: "w-[85%]" },
-                  { label: "DIVISION", level: "03", color: "from-cyan-500 to-emerald-500", width: "w-[70%]" },
-                  { label: "CHURCH", level: "04", color: "from-emerald-500 to-green-500", width: "w-[55%]" }
-                ].map((tier, idx) => (
-                  <div key={idx} className={`${tier.width} h-20 rounded-[1.5rem] bg-gradient-to-r ${tier.color} p-px shadow-lg`}>
-                    <div className="w-full h-full rounded-[1.4rem] bg-card/90 backdrop-blur-xl flex items-center justify-between px-8">
-                       <span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-foreground">{tier.level}</span>
-                       <span className="text-sm font-black uppercase tracking-[0.2em] italic text-foreground">{tier.label}</span>
-                       <Check className="w-4 h-4 text-primary" strokeWidth={3} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =============================
-          ECCLESIASTICAL TOOLS
-          ============================= */}
-      <section id="community" className="bg-background">
-        <div className="mx-auto max-w-7xl px-6 sm:px-10 py-32">
-          <div className="text-center mb-20">
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">The Sanctuary Suite</span>
-            <h2 className="mt-6 text-4xl sm:text-5xl font-black text-foreground tracking-tighter uppercase italic">
-              Tools for God&apos;s Work
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Stats row */}
+          <div className="mt-16 flex overflow-hidden rounded-[22px] border border-white/[0.12] bg-white/[0.06] backdrop-blur-md">
             {[
-              { 
-                icon: Heart, 
-                title: "Digital Bulletin", 
-                desc: "Rich-text Tiptap editor for media teams to broadcast announcements across the mission.",
-                color: "bg-red-500/10 text-red-500"
-              },
-              { 
-                icon: Banknote, 
-                title: "Treasury Hub", 
-                desc: "Mobile-first financial remittance for Tithe and Offering tracking with automated reports.",
-                color: "bg-emerald-500/10 text-emerald-500"
-              },
-              { 
-                icon: Calendar, 
-                title: "Mission Calendar", 
-                desc: "Synchronized scheduling across all organizational tiers with role-based permissions.",
-                color: "bg-blue-500/10 text-blue-500"
-              }
-            ].map((tool, idx) => (
-              <div key={idx} className="group p-8 rounded-[2rem] bg-card/50 border border-border/40 hover:border-primary/20 hover:bg-card transition-all duration-300">
-                <div className={`w-14 h-14 rounded-2xl ${tool.color} flex items-center justify-center mb-8 group-hover:scale-110 transition-transform`}>
-                  <tool.icon size={28} strokeWidth={2.5} />
-                </div>
-                <h3 className="text-xl font-black uppercase tracking-tight mb-4 italic italic text-foreground">{tool.title}</h3>
-                <p className="text-muted-foreground font-medium leading-relaxed text-sm">
-                  {tool.desc}
-                </p>
+              { num: "1", label: "Platform for All" },
+              { num: "28", label: "Fundamental Beliefs" },
+              { num: "Free", label: "For Every Congregation" },
+              { num: "☽", label: "Every Sabbath, Ready" },
+            ].map((stat, i) => (
+              <div
+                key={i}
+                className="flex-1 border-r border-white/[0.1] px-8 py-7 text-center last:border-r-0"
+              >
+                <span className="block font-serif text-4xl text-hero-gold mb-1">{stat.num}</span>
+                <span className="text-[12px] font-medium uppercase tracking-[0.08em] text-white/50">{stat.label}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* =============================
-          CALL TO ACTION
-          ============================= */}
-      <section className="relative py-32 overflow-hidden border-t border-border">
-        {/* Background Accent */}
-        <div className="absolute inset-0 bg-primary/5 -z-10" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+      {/* ── HOW IT WORKS ── */}
+      <section id="how-it-works" className="border-y border-border bg-card">
+        <div className="mx-auto max-w-7xl px-8 py-[100px]">
+          <div className="grid grid-cols-1 items-center gap-20 lg:grid-cols-2">
 
-        <div className="mx-auto max-w-4xl px-6 sm:px-10 text-center">
-          <Star className="w-12 h-12 text-primary mx-auto mb-8 animate-pulse" fill="currentColor" />
-          <h2 className="text-4xl sm:text-6xl font-black text-foreground tracking-tighter uppercase italic leading-[0.9] mb-8">
-            Begin the Mission <br/> Today
+            {/* Left: text */}
+            <div>
+              <div className="mb-3.5 text-[11px] font-bold uppercase tracking-[0.15em] text-primary">
+                How AdventFlow Works
+              </div>
+              <div className="mb-6 h-[3px] w-12 rounded-full bg-gradient-to-r from-gold to-gold-light" />
+              <h2 className="mb-4 font-serif text-[clamp(32px,4vw,48px)] leading-[1.1] tracking-[-0.5px] text-foreground">
+                From your local church{" "}
+                <em className="not-italic text-primary">to the whole Mission</em>
+              </h2>
+              <p className="max-w-[440px] text-[16px] leading-[1.7] text-muted-foreground">
+                The Adventist Church is organized in levels — your local congregation is part of a District, which belongs to a Mission. AdventFlow connects all these levels so everyone stays on the same page.
+              </p>
+
+              <div className="mt-9 flex flex-col gap-6">
+                {[
+                  {
+                    bg: "bg-primary/[0.07]",
+                    stroke: "#1e3a8a",
+                    path: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
+                    title: "Your information is private & safe",
+                    desc: "Each member sees only what they need. Elders see their congregation. Pastors see their district. No one sees more than they should.",
+                  },
+                  {
+                    bg: "bg-gold/[0.08]",
+                    stroke: "#b08c3a",
+                    path: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+                    title: "Leaders approve the right way",
+                    desc: "Just like in your church — Elders confirm Members, Pastors confirm Elders, Mission Admins confirm Pastors. The proper church order is followed every step of the way.",
+                  },
+                  {
+                    bg: "bg-green-500/[0.08]",
+                    stroke: "#16a34a",
+                    path: "M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z",
+                    title: "Administrators get a clear overview",
+                    desc: "Mission administrators can see financial summaries and church activities across all congregations — without sifting through paperwork.",
+                  },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex gap-3.5">
+                    <div className={`flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[10px] ${item.bg}`}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={item.stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d={item.path} />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="mb-0.5 text-[14px] font-semibold text-foreground">{item.title}</div>
+                      <div className="text-[13px] leading-[1.6] text-muted-foreground">{item.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right: hierarchy visual */}
+            <div className="relative rounded-[32px] border border-border bg-gradient-to-br from-[#f8faff] to-[#eef3fb] p-10">
+              <div className="absolute inset-0 rounded-[32px] pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 40% at 50% 100%, rgba(30,58,138,0.06), transparent)" }} />
+              <div className="mb-2 text-center text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                Your church fits here
+              </div>
+              <div className="flex flex-col gap-3.5">
+                {[
+                  { num: "01", name: "Mission", badge: "Mission Admin", active: false },
+                  { num: "02", name: "Area", badge: "District Leader", active: false },
+                  { num: "03", name: "Division", badge: "District Pastor", active: false },
+                  { num: "04", name: "Your Church", badge: "Members & Elders", active: true },
+                ].map((tier, idx) => (
+                  <div key={idx}>
+                    {idx > 0 && <div className="mx-auto my-0 block h-3.5 w-px bg-gradient-to-b from-border to-transparent" />}
+                    <div
+                      className={`flex items-center justify-between rounded-[14px] border px-5 py-4 transition-all hover:shadow-[0_4px_16px_rgba(30,58,138,0.08)] ${
+                        tier.active
+                          ? "border-primary/30 bg-primary/[0.03]"
+                          : "border-border bg-white hover:border-primary/25"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`flex h-[26px] w-[26px] items-center justify-center rounded-[7px] text-[11px] font-bold ${tier.active ? "bg-primary/15 text-primary" : "bg-primary/[0.07] text-primary"}`}>
+                          {tier.num}
+                        </div>
+                        <span className={`text-[14px] font-semibold tracking-[0.02em] ${tier.active ? "font-bold text-primary" : "text-foreground"}`}>
+                          {tier.name}
+                        </span>
+                      </div>
+                      <span className={`rounded-full px-2.5 py-[3px] text-[10px] font-semibold uppercase tracking-[0.1em] ${tier.active ? "bg-primary/12 text-primary" : "bg-primary/[0.07] text-primary"}`}>
+                        {tier.badge}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 flex items-center gap-2.5 border-t border-border pt-5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" strokeWidth="2.5"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                <span className="text-[12px] font-medium text-muted-foreground">Every level stays updated in real time</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TOOLS / FEATURES ── */}
+      <section id="tools" className="bg-background py-[100px]">
+        <div className="mx-auto max-w-7xl px-8">
+          <div className="mb-[60px] text-center">
+            <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-primary">What You Can Do</div>
+            <div className="mx-auto mt-3.5 mb-3.5 h-[3px] w-12 rounded-full bg-gradient-to-r from-gold to-gold-light" />
+            <h2 className="font-serif text-[clamp(32px,4vw,48px)] leading-[1.1] tracking-[-0.5px] text-foreground">
+              Everything your congregation needs
+            </h2>
+            <p className="mx-auto mt-4 max-w-[460px] text-[16px] leading-[1.7] text-muted-foreground">
+              Whether you are a regular member, a church elder, a pastor, or a mission administrator — AdventFlow has something for you.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                bg: "bg-red-500/[0.07]",
+                stroke: "#dc2626",
+                path: "M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10l6 6v10a2 2 0 0 1-2 2zM17 21V13H7v8M7 3v5h8",
+                title: "Church Bulletin",
+                desc: "Read the latest announcements, sermons, and news from your church leaders — posted online so you never miss a thing, even when you're away.",
+                tag: "Announcements · Sermons · News",
+              },
+              {
+                bg: "bg-green-500/[0.07]",
+                stroke: "#16a34a",
+                path: "M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
+                title: "Tithes & Offerings",
+                desc: "Submit your weekly tithe and offerings easily from your phone. Treasurers can view and manage all records transparently — no more lost papers.",
+                tag: "Easy to submit · Transparent · Tracked",
+              },
+              {
+                bg: "bg-blue-500/[0.07]",
+                stroke: "#2563eb",
+                path: "M3 4h18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM16 2v4M8 2v4M2 10h20",
+                title: "Church Events Calendar",
+                desc: "See all upcoming Sabbath programs, prayer meetings, youth events, and mission gatherings in one simple calendar — across your local church and beyond.",
+                tag: "Local · District · Mission-wide",
+              },
+              {
+                bg: "bg-purple-500/[0.07]",
+                stroke: "#9333ea",
+                path: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+                title: "Member Directory",
+                desc: "A secure directory of members, elders, and leaders in your congregation. Find who to contact, and know who serves in which role in your church family.",
+                tag: "Private · Up to date · Role-aware",
+              },
+              {
+                bg: "bg-amber-500/[0.07]",
+                stroke: "#d97706",
+                path: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z",
+                title: "Study Resources",
+                desc: "Access Bible studies, Sabbath School materials, and church resources organized by the 28 Fundamental Beliefs — all in one place for members and leaders alike.",
+                tag: "28 Beliefs · Bible studies · Sermons",
+              },
+              {
+                bg: "bg-primary/10",
+                stroke: "#1e3a8a",
+                path: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z",
+                title: "Daily Bible Verse",
+                desc: "Every time you open AdventFlow, a fresh Bible verse greets you — a simple reminder of God's Word to start your day with purpose and peace.",
+                tag: "Daily · Uplifting · Scripture-based",
+                accent: true,
+              },
+            ].map((card, idx) => (
+              <div
+                key={idx}
+                className={`group rounded-[22px] border p-8 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(30,58,138,0.08)] ${
+                  card.accent
+                    ? "border-primary/15 bg-gradient-to-br from-primary/[0.03] to-primary/[0.06]"
+                    : "border-border bg-card hover:border-primary/20"
+                }`}
+              >
+                <div className={`mb-6 flex h-[50px] w-[50px] items-center justify-center rounded-[14px] ${card.bg}`}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={card.stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={card.path} />
+                  </svg>
+                </div>
+                <div className="mb-2.5 font-serif text-[20px] tracking-[-0.2px] text-foreground">{card.title}</div>
+                <div className="text-[14px] leading-[1.7] text-muted-foreground">{card.desc}</div>
+                <span className="mt-5 inline-block text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/70">
+                  {card.tag}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHO IS IT FOR ── */}
+      <section id="who" className="border-t border-border bg-card py-[100px]">
+        <div className="mx-auto max-w-7xl px-8">
+          <div className="mx-auto mb-[52px] max-w-[560px] text-center">
+            <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-primary">Who Is AdventFlow For?</div>
+            <div className="mx-auto mt-3.5 mb-3.5 h-[3px] w-12 rounded-full bg-gradient-to-r from-gold to-gold-light" />
+            <h2 className="font-serif text-[clamp(32px,4vw,48px)] leading-[1.1] tracking-[-0.5px] text-foreground">
+              Built for <em className="not-italic text-foreground italic">every member</em> of your church
+            </h2>
+            <p className="mx-auto mt-4 text-[16px] leading-[1.7] text-muted-foreground">
+              Whether you sit in the pew or lead the congregation — AdventFlow has a role for you.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                status: "done",
+                forLabel: "For Members",
+                title: "Regular Church Members",
+                desc: "Read the church bulletin, see upcoming events, access Bible studies, and stay connected with your church family — all from your phone or computer.",
+              },
+              {
+                status: "done",
+                forLabel: "For Leaders",
+                title: "Elders & Deacons",
+                desc: "Approve new members, coordinate Sabbath programs, and communicate with your congregation through the bulletin — all in one place.",
+              },
+              {
+                status: "active",
+                forLabel: "For Pastors",
+                title: "District Pastors",
+                desc: "Oversee multiple churches in your district. See attendance, finances, and activities across all your congregations with one simple dashboard.",
+              },
+              {
+                status: "planned",
+                forLabel: "For Treasurers",
+                title: "Church Treasurers",
+                desc: "Receive and record tithes and offerings from members. Generate weekly and monthly financial reports instantly — no more spreadsheets.",
+              },
+              {
+                status: "planned",
+                forLabel: "For Media Teams",
+                title: "Media & Communications",
+                desc: "Publish announcements, upload sermons, and share event updates with the whole congregation — with a simple, easy-to-use editor.",
+              },
+              {
+                status: "planned",
+                forLabel: "For Administrators",
+                title: "Mission Administrators",
+                desc: "Get a bird's-eye view of all churches in your mission territory — financial health, membership growth, and upcoming events — in one place.",
+              },
+            ].map((card, idx) => (
+              <div
+                key={idx}
+                className={`relative overflow-hidden rounded-[22px] border p-7 transition-all hover:shadow-[0_4px_20px_rgba(30,58,138,0.07)] ${
+                  card.status === "active"
+                    ? "border-primary/30 bg-gradient-to-br from-primary/[0.02] to-transparent"
+                    : "border-border bg-card hover:border-primary/20"
+                }`}
+              >
+                {/* Status dot */}
+                <span
+                  className={`absolute right-5 top-5 h-2 w-2 rounded-full ${
+                    card.status === "done"
+                      ? "bg-green-500"
+                      : card.status === "active"
+                      ? "bg-primary animate-pulse"
+                      : "bg-border"
+                  }`}
+                />
+                <div className={`mb-2 text-[11px] font-bold uppercase tracking-[0.15em] ${card.status === "active" ? "text-primary" : "text-muted-foreground/60"}`}>
+                  {card.forLabel}
+                </div>
+                <div className="mb-2 text-[15px] font-semibold text-foreground">{card.title}</div>
+                <div className="text-[13px] leading-[1.6] text-muted-foreground">{card.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="relative overflow-hidden bg-primary py-[100px]">
+        <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(ellipse 70% 80% at 80% 50%, rgba(255,255,255,0.05), transparent)" }} />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/15" />
+        <div className="relative mx-auto max-w-[640px] px-8 text-center">
+          <div className="mb-5 text-[11px] font-bold uppercase tracking-[0.15em] text-white/55">
+            Free for every congregation
+          </div>
+          <h2 className="mb-4 font-serif text-[clamp(36px,5vw,54px)] leading-[1.1] tracking-[-0.5px] text-white">
+            Ready to bring your church <em className="not-italic text-white/75">online?</em>
           </h2>
-          <p className="text-muted-foreground text-lg font-medium mb-12 max-w-xl mx-auto">
-            Ready to streamline your church administration? Join the mission and enter the Sanctuary Hub.
+          <p className="mb-11 text-[16px] leading-[1.7] text-white/60">
+            Join your congregation on AdventFlow. Sign up in minutes and connect with your church family, your leaders, and your mission.
           </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <a
-              href="/signup"
-              className="w-full sm:w-auto px-12 py-5 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-widest text-xs shadow-2xl shadow-primary/20 hover:scale-105 transition-all"
+              href={user ? "/dashboard" : "/signup"}
+              className="inline-flex items-center gap-2 rounded-xl bg-white px-7 py-3.5 text-[14px] font-semibold text-primary no-underline shadow-[0_4px_20px_rgba(0,0,0,0.15)] transition-all hover:-translate-y-px hover:shadow-[0_8px_28px_rgba(0,0,0,0.2)]"
             >
-              Request Access
+              Join your congregation
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>
             <a
               href="/login"
-              className="w-full sm:w-auto px-12 py-5 rounded-2xl border border-border bg-card/50 font-black uppercase tracking-widest text-xs hover:bg-secondary transition-all text-foreground"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-3.5 text-[14px] font-medium text-white/80 no-underline transition-all hover:border-white/35 hover:bg-white/15"
             >
-              Sign In
+              Already a member? Sign in
             </a>
           </div>
         </div>

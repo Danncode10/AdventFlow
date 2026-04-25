@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//private/tmp/**)",
+      "Bash(unzip -o \"/Users/lesterdannlopez/Downloads/AdventFlow-handoff.zip\" -d adventflow-handoff)"
+    ]
+  }
+}
